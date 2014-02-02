@@ -8,14 +8,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.PriorityQueue;
 import java.util.Set;
 import java.util.Vector;
 
 import org.w3c.dom.Document;
 
+import de.unirostock.sems.xmlutils.alg.SemsWeighter;
 import de.unirostock.sems.xmlutils.alg.Weighter;
-import de.unirostock.sems.xmlutils.alg.XyWeighter;
 import de.unirostock.sems.xmlutils.ds.mappers.MultiNodeMapper;
 import de.unirostock.sems.xmlutils.ds.mappers.NodeMapper;
 import de.unirostock.sems.xmlutils.exception.XmlDocumentParseException;
@@ -52,7 +51,7 @@ public class TreeDocument
 	public TreeDocument (Document d, URI baseUri) throws XmlDocumentParseException
 	{
 		init ();
-		Weighter w = new XyWeighter (); // default xy
+		Weighter w = new SemsWeighter (); // default sems weighter
 		root = new DocumentNode (d.getDocumentElement (), null, this, w, 1, 0);//, pathMapper, idMapper, hashMapper, tagMapper, subtreesBySize);
 		Collections.sort (subtreesBySize, new TreeNodeComparatorBySubtreeSize (true));
 		ordered = true;
@@ -64,7 +63,7 @@ public class TreeDocument
 	{
 		init ();
 		if (w == null)
-			w = new XyWeighter (); // default xy
+			w = new SemsWeighter (); // default sems weighter
 		root = new DocumentNode (d.getDocumentElement (), null, this, w, 1, 0);//, pathMapper, idMapper, hashMapper, tagMapper, subtreesBySize);
 		Collections.sort (subtreesBySize, new TreeNodeComparatorBySubtreeSize (true));
 		ordered = true;
@@ -74,7 +73,7 @@ public class TreeDocument
 	public TreeDocument (Document d, URI baseUri, boolean ordered) throws XmlDocumentParseException
 	{
 		init ();
-		Weighter w = new XyWeighter (); // default xy
+		Weighter w = new SemsWeighter (); // default sems weighter
 		root = new DocumentNode (d.getDocumentElement (), null, this, w, 1, 0);//, pathMapper, idMapper, hashMapper, tagMapper, subtreesBySize);
 		Collections.sort (subtreesBySize, new TreeNodeComparatorBySubtreeSize (true));
 		this.ordered = ordered;
@@ -84,7 +83,7 @@ public class TreeDocument
 	{
 		init ();
 		if (w == null)
-			w = new XyWeighter (); // default xy
+			w = new SemsWeighter (); // default sems weighter
 		root = new DocumentNode (d.getDocumentElement (), null, this, w, 1, 0);//, pathMapper, idMapper, hashMapper, tagMapper, subtreesBySize);
 		Collections.sort (subtreesBySize, new TreeNodeComparatorBySubtreeSize (true));
 		this.ordered = ordered;
