@@ -1,4 +1,4 @@
-package de.unirostock.sems.xmltools.tools;
+package de.unirostock.sems.xmlutils.tools;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -8,13 +8,15 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
 
 import org.w3c.dom.Document;
 
 import de.binfalse.bflog.LOGGER;
 import de.binfalse.bfutils.SimpleOutputStream;
-import de.unirostock.sems.xmltools.ds.DocumentNode;
-import de.unirostock.sems.xmltools.ds.TreeDocument;
+import de.unirostock.sems.xmlutils.ds.DocumentNode;
+import de.unirostock.sems.xmlutils.ds.TreeDocument;
 
 
 /**
@@ -24,6 +26,9 @@ import de.unirostock.sems.xmltools.ds.TreeDocument;
  */
 public class DocumentTools
 {
+	
+	/** The transformer to convert content mathml to presentation mathml. */
+	private static Transformer mathTransformer;
 	
 	/**
 	 * Extracts the document from a given TreeDocument.
@@ -119,19 +124,20 @@ public class DocumentTools
    */
   public static String transformMathML (DocumentNode doc) throws TransformerException
   {
-
-		TransformerFactory tFactory = 
-		TransformerFactory.newInstance();
-		
-		InputStream input = DocumentTools.class.getResourceAsStream("/res/mmlctop2_0.xsl");
-		Transformer transformer = tFactory.newTransformer (new javax.xml.transform.stream.StreamSource(input));
-
+  	if (mathTransformer == null)
+  	{
+			TransformerFactory tFactory = TransformerFactory.newInstance();
+			
+			InputStream input = DocumentTools.class.getResourceAsStream("/res/mmlctop2_0.xsl");
+			mathTransformer = tFactory.newTransformer (new StreamSource(input));
+  	}
+  	
     SimpleOutputStream out = new SimpleOutputStream ();
     String math = printSubDoc (doc);
     // xslt cannot namespace
     math = math.replaceAll ("\\S+:\\S+\\s*=\\s*\"[^\"]*\"", "");
     
-		transformer.transform (new javax.xml.transform.stream.StreamSource(new ByteArrayInputStream(math.getBytes())), new javax.xml.transform.stream.StreamResult(out));
+    mathTransformer.transform (new StreamSource(new ByteArrayInputStream(math.getBytes())), new StreamResult(out));
 		return out.toString ();
   }
 	

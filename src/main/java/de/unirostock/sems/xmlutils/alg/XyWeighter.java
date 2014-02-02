@@ -1,10 +1,13 @@
 /**
  * 
  */
-package de.unirostock.sems.xmltools.alg;
+package de.unirostock.sems.xmlutils.alg;
 
-import de.unirostock.sems.xmltools.ds.DocumentNode;
-import de.unirostock.sems.xmltools.ds.TextNode;
+import java.util.Vector;
+
+import de.unirostock.sems.xmlutils.ds.DocumentNode;
+import de.unirostock.sems.xmlutils.ds.TextNode;
+import de.unirostock.sems.xmlutils.ds.TreeNode;
 
 
 
@@ -23,17 +26,12 @@ public class XyWeighter
 	@Override
 	public double getWeight (DocumentNode node)
 	{
-		//double weight = 0;
-		
-		/*String txt = node.getText ();
-		if (txt != null && txt.length () > 0)
-			weight = Math.log (txt.length ());*/
-		
-		/*weight += node.getSizeSubtree () + 1;
-		
-		return weight;*/
-		
-		return node.getSizeSubtree () + 1;
+		// from Cobena2002 
+		double weight = 1;
+		Vector<TreeNode> kids = node.getChildren ();
+		for (TreeNode kid : kids)
+			weight += kid.getWeight ();
+		return weight;
 	}
 	
 	/* (non-Javadoc)

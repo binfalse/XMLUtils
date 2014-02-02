@@ -1,7 +1,7 @@
 /**
  * 
  */
-package de.unirostock.sems.xmltools.exception;
+package de.unirostock.sems.xmlutils.exception;
 
 
 

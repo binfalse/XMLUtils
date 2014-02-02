@@ -1,7 +1,7 @@
 /**
  * 
  */
-package de.unirostock.sems.xmltools.ds;
+package de.unirostock.sems.xmlutils.ds;
 
 import java.util.HashMap;
 import java.util.Set;
@@ -16,11 +16,11 @@ import org.w3c.dom.NodeList;
 
 import de.binfalse.bflog.LOGGER;
 import de.binfalse.bfutils.GeneralTools;
-import de.unirostock.sems.xmltools.alg.Weighter;
-import de.unirostock.sems.xmltools.comparison.Connection;
-import de.unirostock.sems.xmltools.comparison.ConnectionManager;
-import de.unirostock.sems.xmltools.exception.XmlDocumentConsistencyException;
-import de.unirostock.sems.xmltools.exception.XmlDocumentParseException;
+import de.unirostock.sems.xmlutils.alg.Weighter;
+import de.unirostock.sems.xmlutils.comparison.Connection;
+import de.unirostock.sems.xmlutils.comparison.ConnectionManager;
+import de.unirostock.sems.xmlutils.exception.XmlDocumentConsistencyException;
+import de.unirostock.sems.xmlutils.exception.XmlDocumentParseException;
 
 
 /**
@@ -237,8 +237,8 @@ public class DocumentNode extends TreeNode// implements Comparable<DocumentNode>
 				children.add (kid);
 				childrenByTag.get ("text()").add (kid);
 				//subTreeHash += kid.getSubTreeHash ();
-				sizeSubtree += 1;
-				numLeaves += 1;
+				sizeSubtree++;
+				numLeaves++;
 				//Element cur = (Element) current;
 				/*if (text == null)
 					text = "";
@@ -495,7 +495,7 @@ public class DocumentNode extends TreeNode// implements Comparable<DocumentNode>
 		StringBuilder attr = new StringBuilder (" ");
 		for (String a : attributes.keySet ())
 			attr.append (a + "=\"" + attributes.get (a) + "\" ");
-		attr = new StringBuilder ("<" + tagName + attr.toString () + ">\t(" + xPath + ")\t"+subTreeHash+"\n");
+		attr = new StringBuilder ("<" + tagName + attr.toString () + ">\t" + weight + "\t(" + xPath + ")\t"+subTreeHash+"\n");
 		for (int i = 0; i < children.size (); i++)
 			attr.append (children.elementAt (i));
 		return attr.toString () + "</" + tagName + ">\n";

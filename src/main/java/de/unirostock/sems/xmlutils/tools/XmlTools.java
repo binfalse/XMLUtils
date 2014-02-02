@@ -1,13 +1,19 @@
 /**
  * 
  */
-package de.unirostock.sems.xmltools.tools;
+package de.unirostock.sems.xmlutils.tools;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
@@ -19,18 +25,37 @@ import org.w3c.dom.Document;
 import org.w3c.dom.ls.DOMImplementationLS;
 import org.w3c.dom.ls.LSOutput;
 import org.w3c.dom.ls.LSSerializer;
+import org.xml.sax.SAXException;
 
 import de.binfalse.bfutils.SimpleOutputStream;
 
 
 
 /**
- * XML related toolkit.
+ * XML toolkit.
  *
  * @author Martin Scharm
  */
 public class XmlTools
 {
+	
+	/**
+	 * Reads an XML document.
+	 *
+	 * @param file the document to read
+	 * @return the document
+	 * @throws ParserConfigurationException the parser configuration exception
+	 * @throws FileNotFoundException the file not found exception
+	 * @throws SAXException the sAX exception
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 */
+	public static Document readDocument (File file) throws ParserConfigurationException, FileNotFoundException, SAXException, IOException
+	{
+		DocumentBuilder builder = DocumentBuilderFactory.newInstance ()
+			.newDocumentBuilder ();
+		
+		return builder.parse (new FileInputStream (file));
+	}
 	
 	/**
 	 * Pretty print a document.
@@ -56,14 +81,14 @@ public class XmlTools
 		DOMImplementationLS domImplLS = (DOMImplementationLS) doc
 	    .getImplementation();
 	
-  ByteArrayOutputStream baos = new ByteArrayOutputStream();
-
+	  ByteArrayOutputStream baos = new ByteArrayOutputStream();
 	
-	LSOutput lso = domImplLS.createLSOutput();
-	lso.setByteStream(baos);
-	LSSerializer lss = domImplLS.createLSSerializer();
-	lss.write(doc, lso);
-	return baos.toString ();
+		
+		LSOutput lso = domImplLS.createLSOutput();
+		lso.setByteStream(baos);
+		LSSerializer lss = domImplLS.createLSSerializer();
+		lss.write(doc, lso);
+		return baos.toString ();
 	
 	}
 

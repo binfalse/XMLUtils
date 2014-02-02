@@ -1,10 +1,10 @@
 /**
  * 
  */
-package de.unirostock.sems.xmltools.alg;
+package de.unirostock.sems.xmlutils.alg;
 
-import de.unirostock.sems.xmltools.ds.DocumentNode;
-import de.unirostock.sems.xmltools.ds.TextNode;
+import de.unirostock.sems.xmlutils.ds.DocumentNode;
+import de.unirostock.sems.xmlutils.ds.TextNode;
 
 
 /**

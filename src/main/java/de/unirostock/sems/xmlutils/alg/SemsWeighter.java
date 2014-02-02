@@ -1,10 +1,13 @@
 /**
  * 
  */
-package de.unirostock.sems.xmltools.alg;
+package de.unirostock.sems.xmlutils.alg;
 
-import de.unirostock.sems.xmltools.ds.DocumentNode;
-import de.unirostock.sems.xmltools.ds.TextNode;
+import java.util.Vector;
+
+import de.unirostock.sems.xmlutils.ds.DocumentNode;
+import de.unirostock.sems.xmlutils.ds.TextNode;
+import de.unirostock.sems.xmlutils.ds.TreeNode;
 
 
 
@@ -23,7 +26,11 @@ public class SemsWeighter
 	@Override
 	public double getWeight (DocumentNode node)
 	{
-		return node.getSizeSubtree () + 1;
+		double weight = 1;
+		Vector<TreeNode> kids = node.getChildren ();
+		for (TreeNode kid : kids)
+			weight += kid.getWeight ();
+		return weight;
 	}
 	
 	/* (non-Javadoc)

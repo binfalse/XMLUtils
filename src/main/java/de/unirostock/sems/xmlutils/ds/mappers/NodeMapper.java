@@ -1,7 +1,7 @@
 /**
  * 
  */
-package de.unirostock.sems.xmltools.ds.mappers;
+package de.unirostock.sems.xmlutils.ds.mappers;
 
 import java.util.HashMap;
 import java.util.Set;
@@ -11,8 +11,8 @@ import java.util.Set;
  * The Class NodeMapper maps Strings to nodes. Intended to map e.g. node id => node. T is usually TreeNode or DocumentNode.
  *
  * @param <T> the generic type, e.g. TreeNode or DocumentNode
- * @see de.unirostock.sems.xmltools.ds.TreeNode
- * @see de.unirostock.sems.xmltools.ds.DocumentNode
+ * @see de.unirostock.sems.xmlutils.ds.TreeNode
+ * @see de.unirostock.sems.xmlutils.ds.DocumentNode
  * @author Martin Scharm
  */
 public class NodeMapper<T>

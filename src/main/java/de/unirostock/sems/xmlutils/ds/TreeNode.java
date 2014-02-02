@@ -1,7 +1,7 @@
 /**
  * 
  */
-package de.unirostock.sems.xmltools.ds;
+package de.unirostock.sems.xmlutils.ds;
 
 import java.util.HashMap;
 import java.util.Vector;
@@ -9,8 +9,8 @@ import java.util.Vector;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import de.unirostock.sems.xmltools.comparison.Connection;
-import de.unirostock.sems.xmltools.comparison.ConnectionManager;
+import de.unirostock.sems.xmlutils.comparison.Connection;
+import de.unirostock.sems.xmlutils.comparison.ConnectionManager;
 
 
 
@@ -20,7 +20,7 @@ import de.unirostock.sems.xmltools.comparison.ConnectionManager;
  */
 public abstract class TreeNode
 {
-	protected static final String TEXT_TAG = "text()";
+	public static final String TEXT_TAG = "text()";
 	
 	public static final int UNCHANGED = 0;
 	public static final int UNMAPPED = 1;
@@ -59,6 +59,11 @@ public abstract class TreeNode
 		this.level = level;
 	}
 	
+	/**
+	 * Returns the level of this node in its tree. Root has level 0.
+	 *
+	 * @return the level
+	 */
 	public int getLevel ()
 	{
 		return level;

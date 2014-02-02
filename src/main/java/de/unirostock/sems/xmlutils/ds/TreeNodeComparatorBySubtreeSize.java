@@ -1,7 +1,7 @@
 /**
  * 
  */
-package de.unirostock.sems.xmltools.ds;
+package de.unirostock.sems.xmlutils.ds;
 
 import java.util.Comparator;
 

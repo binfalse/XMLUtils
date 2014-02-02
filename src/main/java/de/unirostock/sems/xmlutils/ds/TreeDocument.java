@@ -1,9 +1,10 @@
 /**
  * 
  */
-package de.unirostock.sems.xmltools.ds;
+package de.unirostock.sems.xmlutils.ds;
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -13,11 +14,11 @@ import java.util.Vector;
 
 import org.w3c.dom.Document;
 
-import de.unirostock.sems.xmltools.alg.Weighter;
-import de.unirostock.sems.xmltools.alg.XyWeighter;
-import de.unirostock.sems.xmltools.ds.mappers.MultiNodeMapper;
-import de.unirostock.sems.xmltools.ds.mappers.NodeMapper;
-import de.unirostock.sems.xmltools.exception.XmlDocumentParseException;
+import de.unirostock.sems.xmlutils.alg.Weighter;
+import de.unirostock.sems.xmlutils.alg.XyWeighter;
+import de.unirostock.sems.xmlutils.ds.mappers.MultiNodeMapper;
+import de.unirostock.sems.xmlutils.ds.mappers.NodeMapper;
+import de.unirostock.sems.xmlutils.exception.XmlDocumentParseException;
 
 
 /**
@@ -31,19 +32,27 @@ public class TreeDocument
 	private NodeMapper<TreeNode>  pathMapper;
 	private MultiNodeMapper<TreeNode> hashMapper;
 	private MultiNodeMapper<DocumentNode> tagMapper;
+	private List<TextNode> textNodes;
 	private boolean ordered;
 	private Vector<TreeNode> subtreesBySize;
 	private boolean uniqueIds;
 	private URI baseUri;
 
-	public TreeDocument (Document d, URI baseUri) throws XmlDocumentParseException
+	private void init ()
 	{
-		Weighter w = new XyWeighter (); // default xy
 		pathMapper = new NodeMapper<TreeNode> ();
 		idMapper = new NodeMapper<DocumentNode> ();
 		hashMapper = new MultiNodeMapper<TreeNode> ();
 		tagMapper = new MultiNodeMapper<DocumentNode> ();
 		subtreesBySize = new Vector<TreeNode> ();
+		textNodes = new ArrayList<TextNode> ();
+		
+	}
+	
+	public TreeDocument (Document d, URI baseUri) throws XmlDocumentParseException
+	{
+		init ();
+		Weighter w = new XyWeighter (); // default xy
 		root = new DocumentNode (d.getDocumentElement (), null, this, w, 1, 0);//, pathMapper, idMapper, hashMapper, tagMapper, subtreesBySize);
 		Collections.sort (subtreesBySize, new TreeNodeComparatorBySubtreeSize ());
 		ordered = true;
@@ -53,13 +62,9 @@ public class TreeDocument
 
 	public TreeDocument (Document d, Weighter w, URI baseUri) throws XmlDocumentParseException
 	{
+		init ();
 		if (w == null)
 			w = new XyWeighter (); // default xy
-		pathMapper = new NodeMapper<TreeNode> ();
-		idMapper = new NodeMapper<DocumentNode> ();
-		hashMapper = new MultiNodeMapper<TreeNode> ();
-		tagMapper = new MultiNodeMapper<DocumentNode> ();
-		subtreesBySize = new Vector<TreeNode> ();
 		root = new DocumentNode (d.getDocumentElement (), null, this, w, 1, 0);//, pathMapper, idMapper, hashMapper, tagMapper, subtreesBySize);
 		Collections.sort (subtreesBySize, new TreeNodeComparatorBySubtreeSize ());
 		ordered = true;
@@ -68,12 +73,8 @@ public class TreeDocument
 	}
 	public TreeDocument (Document d, URI baseUri, boolean ordered) throws XmlDocumentParseException
 	{
+		init ();
 		Weighter w = new XyWeighter (); // default xy
-		pathMapper = new NodeMapper<TreeNode> ();
-		idMapper = new NodeMapper<DocumentNode> ();
-		hashMapper = new MultiNodeMapper<TreeNode> ();
-		tagMapper = new MultiNodeMapper<DocumentNode> ();
-		subtreesBySize = new Vector<TreeNode> ();
 		root = new DocumentNode (d.getDocumentElement (), null, this, w, 1, 0);//, pathMapper, idMapper, hashMapper, tagMapper, subtreesBySize);
 		Collections.sort (subtreesBySize, new TreeNodeComparatorBySubtreeSize ());
 		this.ordered = ordered;
@@ -81,13 +82,9 @@ public class TreeDocument
 	}
 	public TreeDocument (Document d, Weighter w, URI baseUri, boolean ordered) throws XmlDocumentParseException
 	{
+		init ();
 		if (w == null)
 			w = new XyWeighter (); // default xy
-		pathMapper = new NodeMapper<TreeNode> ();
-		idMapper = new NodeMapper<DocumentNode> ();
-		hashMapper = new MultiNodeMapper<TreeNode> ();
-		tagMapper = new MultiNodeMapper<DocumentNode> ();
-		subtreesBySize = new Vector<TreeNode> ();
 		root = new DocumentNode (d.getDocumentElement (), null, this, w, 1, 0);//, pathMapper, idMapper, hashMapper, tagMapper, subtreesBySize);
 		Collections.sort (subtreesBySize, new TreeNodeComparatorBySubtreeSize ());
 		this.ordered = ordered;
@@ -121,6 +118,7 @@ public class TreeDocument
 		else
 		{
 			hashMapper.addNode (node.getOwnHash (), node);
+			textNodes.add ((TextNode) node);
 		}
 	}
 	
@@ -138,7 +136,10 @@ public class TreeDocument
 				idMapper.rmNode (dnode.getId ());
 		}
 		else
+		{
 			hashMapper.rmNode (node.getOwnHash (), node);
+			textNodes.remove (node);
+		}
 	}
 	
 
@@ -177,6 +178,11 @@ public class TreeDocument
 		return root.getWeight ();
 	}
 	
+	public List<TextNode> getTextNodes ()
+	{
+		return textNodes;
+	}
+	
 	public List<DocumentNode> getNodesByTag (String tag)
 	{
 		List<DocumentNode> nodes = tagMapper.getNodes (tag);
@@ -197,7 +203,7 @@ public class TreeDocument
 		return hashMapper.getNodes (hash);
 	}
 	
-	public TreeNode getNodeById (String id)
+	public DocumentNode getNodeById (String id)
 	{
 		if (uniqueIds)
 			return idMapper.getNode (id);

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package de.unirostock.sems.xmltools.ds.mappers;
+package de.unirostock.sems.xmlutils.ds.mappers;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -13,8 +13,8 @@ import java.util.Set;
  * The Class MultiNodeMapper maps Strings to a list of nodes. Intended to map e.g. tag names => nodes. T is usually TreeNode or DocumentNode.
  *
  * @param <T> the generic type, e.g. TreeNode or DocumentNode
- * @see de.unirostock.sems.xmltools.ds.TreeNode
- * @see de.unirostock.sems.xmltools.ds.DocumentNode
+ * @see de.unirostock.sems.xmlutils.ds.TreeNode
+ * @see de.unirostock.sems.xmlutils.ds.DocumentNode
  * @author Martin Scharm
  */
 public class MultiNodeMapper<T>

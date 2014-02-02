@@ -1,7 +1,7 @@
 /**
  * 
  */
-package de.unirostock.sems.xmltools.ds;
+package de.unirostock.sems.xmlutils.ds;
 
 import java.util.HashMap;
 import java.util.Vector;
@@ -12,9 +12,9 @@ import org.w3c.dom.Node;
 
 import de.binfalse.bflog.LOGGER;
 import de.binfalse.bfutils.GeneralTools;
-import de.unirostock.sems.xmltools.alg.Weighter;
-import de.unirostock.sems.xmltools.comparison.Connection;
-import de.unirostock.sems.xmltools.comparison.ConnectionManager;
+import de.unirostock.sems.xmlutils.alg.Weighter;
+import de.unirostock.sems.xmlutils.comparison.Connection;
+import de.unirostock.sems.xmlutils.comparison.ConnectionManager;
 
 
 /**
@@ -220,5 +220,13 @@ public class TextNode
 	public String getSubTreeHash ()
 	{
 		return getOwnHash ();
+	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString ()
+	{
+		return "TEXT: " + weight + "\t(" + xPath + ")\t" + text;
 	}
 }

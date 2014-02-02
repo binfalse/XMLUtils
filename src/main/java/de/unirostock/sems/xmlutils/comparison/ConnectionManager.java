@@ -1,9 +1,9 @@
 /**
  * 
  */
-package de.unirostock.sems.xmltools.comparison;
+package de.unirostock.sems.xmlutils.comparison;
 
-import de.unirostock.sems.xmltools.ds.TreeNode;
+import de.unirostock.sems.xmlutils.ds.TreeNode;
 
 
 /**
