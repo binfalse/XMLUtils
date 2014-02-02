@@ -71,9 +71,16 @@ public class TreeNodeComparatorBySubtreeSize implements Comparator<TreeNode>
 		if (sub1 > sub2)
 			return 1;
 		
+		// in case of equality compare weights
+		double w1 = o1.getWeight (), w2 = o2.getWeight ();
+		if (w1 < w2)
+			return -1;
+		if (w1 > w2)
+			return 1;
+		
 		int a1 = ((DocumentNode) o1).getAttributes ().size (), a2 = ((DocumentNode) o2).getAttributes ().size ();
 		
-		// if that equals, compare number of arguments
+		// if that also equals, compare number of arguments
 		if (a1 < a2)
 			return -1;
 		if (a1 > a2)

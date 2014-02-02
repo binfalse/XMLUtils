@@ -38,6 +38,44 @@ public class XmlTest
 	private static final File MATHML_DOC = new File ("test/mathml.xml");
 	private static final double EPSILON = 0.0001;
 
+	public int getSize (TreeNode n)
+	{
+		if (n.getType () == TreeNode.DOC_NODE)
+			return ((DocumentNode) n).getSizeSubtree () + 1;
+		return 1;
+	}
+
+	@Test
+	public void testTreeNodeComparatorBySubtreeSize ()
+	{
+		if (!SIMPLE_DOC.canRead ())
+		{
+			LOGGER.error ("cannot read " + SIMPLE_DOC + " -> skipping test");
+			return;
+		}
+		TreeDocument simpleDoc = null;
+		try
+		{
+			simpleDoc = new TreeDocument (XmlTools.readDocument (SIMPLE_DOC), null);
+		}
+		catch (Exception e)
+		{
+			fail ("failed to parse " + SIMPLE_DOC);
+		}
+		
+		TreeNode [] subTrees = simpleDoc.getSubtreesBySize ();
+		DocumentNode root = simpleDoc.getRoot ();
+		assertEquals ("num subtrees doesn't equal number of nodes", root.getSizeSubtree () + 1, subTrees.length);
+		
+		for (int i = 1; i < subTrees.length; i++)
+		{
+			int prevSize = getSize (subTrees[i - 1]);
+			int curSize = getSize (subTrees[i]);
+			System.out.println (i + "-" + subTrees[i].getXPath () + " ==> " + curSize + " / " + subTrees[i].getWeight ());
+			assertTrue ("getSubtreesBySize isn't sorted: " + prevSize+ "<" +  curSize, curSize <= prevSize);
+		}
+	}
+	
 	@Test
 	public void testMathML ()
 	{
@@ -101,7 +139,7 @@ public class XmlTest
 		
 		DocumentNode root = simpleDoc.getRoot ();
 		int numNodes = root.getSizeSubtree () + 1;
-		assertEquals ("numNodes != 14", numNodes, 15);
+		assertEquals ("numNodes != 15", numNodes, 15);
 		assertEquals ("numNodes != getNumNodes", numNodes, simpleDoc.getNumNodes ());
 		assertEquals ("numNodes != num XPaths", numNodes, simpleDoc.getOccuringXPaths ().size ());
 		

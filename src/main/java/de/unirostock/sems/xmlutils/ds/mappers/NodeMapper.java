@@ -8,7 +8,7 @@ import java.util.Set;
 
 
 /**
- * The Class NodeMapper maps Strings to nodes. Intended to map e.g. node id => node. T is usually TreeNode or DocumentNode.
+ * The Class NodeMapper maps Strings to nodes. Intended to map unique labels (e.g. node id => node). T is usually TreeNode or DocumentNode.
  *
  * @param <T> the generic type, e.g. TreeNode or DocumentNode
  * @see de.unirostock.sems.xmlutils.ds.TreeNode

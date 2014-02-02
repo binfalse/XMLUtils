@@ -54,7 +54,7 @@ public class TreeDocument
 		init ();
 		Weighter w = new XyWeighter (); // default xy
 		root = new DocumentNode (d.getDocumentElement (), null, this, w, 1, 0);//, pathMapper, idMapper, hashMapper, tagMapper, subtreesBySize);
-		Collections.sort (subtreesBySize, new TreeNodeComparatorBySubtreeSize ());
+		Collections.sort (subtreesBySize, new TreeNodeComparatorBySubtreeSize (true));
 		ordered = true;
 		uniqueIds = true;
 		this.baseUri = baseUri;
@@ -66,7 +66,7 @@ public class TreeDocument
 		if (w == null)
 			w = new XyWeighter (); // default xy
 		root = new DocumentNode (d.getDocumentElement (), null, this, w, 1, 0);//, pathMapper, idMapper, hashMapper, tagMapper, subtreesBySize);
-		Collections.sort (subtreesBySize, new TreeNodeComparatorBySubtreeSize ());
+		Collections.sort (subtreesBySize, new TreeNodeComparatorBySubtreeSize (true));
 		ordered = true;
 		uniqueIds = true;
 		this.baseUri = baseUri;
@@ -76,7 +76,7 @@ public class TreeDocument
 		init ();
 		Weighter w = new XyWeighter (); // default xy
 		root = new DocumentNode (d.getDocumentElement (), null, this, w, 1, 0);//, pathMapper, idMapper, hashMapper, tagMapper, subtreesBySize);
-		Collections.sort (subtreesBySize, new TreeNodeComparatorBySubtreeSize ());
+		Collections.sort (subtreesBySize, new TreeNodeComparatorBySubtreeSize (true));
 		this.ordered = ordered;
 		uniqueIds = true;
 	}
@@ -86,7 +86,7 @@ public class TreeDocument
 		if (w == null)
 			w = new XyWeighter (); // default xy
 		root = new DocumentNode (d.getDocumentElement (), null, this, w, 1, 0);//, pathMapper, idMapper, hashMapper, tagMapper, subtreesBySize);
-		Collections.sort (subtreesBySize, new TreeNodeComparatorBySubtreeSize ());
+		Collections.sort (subtreesBySize, new TreeNodeComparatorBySubtreeSize (true));
 		this.ordered = ordered;
 		uniqueIds = true;
 		this.baseUri = baseUri;
@@ -94,7 +94,7 @@ public class TreeDocument
 	
 	public void resortSubtrees ()
 	{
-		Collections.sort (subtreesBySize, new TreeNodeComparatorBySubtreeSize ());
+		Collections.sort (subtreesBySize, new TreeNodeComparatorBySubtreeSize (true));
 	}
 	
 	public void integrate (TreeNode node)

@@ -7,11 +7,19 @@ import de.unirostock.sems.xmlutils.ds.TreeNode;
 
 
 /**
- * @author martin
- *
+ * The Interface Connection representing a connection of nodes in trees.
+ * 
+ * @author Martin Scharm
  */
 public interface Connection
 {
+	
+	/**
+	 * Gets the opposite of the given node in this connection. Thus, if this connection connects A and B: <code>getPartnerOf (A) = B</code>, and <code>getPartnerOf (B) = A</code>.
+	 *
+	 * @param node the node
+	 * @return the partner of
+	 */
 	public TreeNode getPartnerOf (TreeNode node);
 
 	/**
@@ -29,9 +37,32 @@ public interface Connection
 	public TreeNode getTreeB ();
 
 	
-	public void setWeight (double u);
+	/**
+	 * Sets the weight of that connection. Thus, connections can be weighted differently.
+	 *
+	 * @param w the new weight
+	 */
+	public void setWeight (double w);
+	
+	/**
+	 * Gets the weight of that connection.
+	 *
+	 * @return the weight
+	 */
 	public double getWeight ();
-	public void scaleWeight (double u);
-	public void addWeight (double u);
+	
+	/**
+	 * Scales the weight with an factor s.
+	 *
+	 * @param s the factor used to scale the weight
+	 */
+	public void scaleWeight (double s);
+	
+	/**
+	 * Adds (+) a weight to the connection's weight.
+	 *
+	 * @param s the s
+	 */
+	public void addWeight (double s);
 	
 }

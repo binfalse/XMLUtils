@@ -104,7 +104,6 @@ public class DocumentTools
 			DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
 			
 			Document d = docBuilder.newDocument ();
-			d.createElementNS ("http://www.cellml.org/cellml/1.0", "cellml");
 			node.getSubDoc (d, null);
 			return XmlTools.prettyPrintDocument (d, new SimpleOutputStream ()).toString ();
 		}
