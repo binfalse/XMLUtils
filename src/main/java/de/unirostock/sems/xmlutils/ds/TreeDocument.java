@@ -209,6 +209,18 @@ public class TreeDocument
 		return null;
 	}
 	
+	/**
+	 * Gets the node by XPath expression. Currently only XPath expressions computed by us are supported. A common use case is for example 
+	 * 
+	 * <code>
+	 * docB.getNodeByPath (nodeFromA.getXPath ());
+	 * </code>
+	 * 
+	 * to search for a node at the same path in another document.
+	 *
+	 * @param path the path
+	 * @return the node by path
+	 */
 	public TreeNode getNodeByPath (String path)
 	{
 		return pathMapper.getNode (path);
@@ -254,5 +266,27 @@ public class TreeDocument
 		s += "\n\n\n";
 		//s += pathMapper.toString ();
 		return s;
+	}
+	
+	public boolean equals (Object anObject)
+	{
+		if (this == anObject)
+			return true;
+		
+		if (anObject instanceof TreeDocument)
+		{
+			DocumentNode thisNode = this.getRoot ();
+			DocumentNode otherNode = ((TreeDocument) anObject).getRoot ();
+			
+			
+			if (thisNode == null || otherNode == null)
+				return thisNode == null && otherNode == null;
+			
+			return thisNode.getSubTreeHash ().equals (otherNode.getSubTreeHash ())
+				// plus just to make sure... ;-)
+				&& thisNode.getSizeSubtree () == otherNode.getSizeSubtree ();
+		}
+		
+		return false;
 	}
 }
