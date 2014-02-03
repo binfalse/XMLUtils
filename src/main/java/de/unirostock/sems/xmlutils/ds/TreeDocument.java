@@ -208,6 +208,10 @@ public class TreeDocument
 				else
 					idMapper.putNode (id, dnode);
 			}
+			// integrate all children
+			Vector<TreeNode> kids = dnode.getChildren ();
+			for (TreeNode tn : kids)
+				integrate (tn);
 		}
 		else
 			textNodes.add ((TextNode) node);
@@ -233,6 +237,10 @@ public class TreeDocument
 			tagMapper.rmNode (dnode.getTagName (), dnode);
 			if (dnode.getId () != null)
 				idMapper.rmNode (dnode.getId ());
+			// separate all children
+			Vector<TreeNode> kids = dnode.getChildren ();
+			for (TreeNode tn : kids)
+				separate (tn);
 		}
 		else
 			textNodes.remove (node);
