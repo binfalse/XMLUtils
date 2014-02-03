@@ -4,11 +4,9 @@
 package de.unirostock.sems.xmlutils.ds;
 
 import java.util.HashMap;
-import java.util.Vector;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 
 import de.binfalse.bflog.LOGGER;
 import de.binfalse.bfutils.GeneralTools;
@@ -17,22 +15,38 @@ import de.unirostock.sems.xmlutils.comparison.Connection;
 import de.unirostock.sems.xmlutils.comparison.ConnectionManager;
 
 
+
 /**
+ * The Class TextNode representing text content inside a document.
+ * 
  * @author Martin Scharm
- *
  */
 public class TextNode
 	extends TreeNode
 {
-	/** The hash. */
-	private String ownHash;
-	private String text;
 	
-	private double weight;
-	private Weighter weighter;
+	/** The hash of this node. */
+	private String				ownHash;
 	
-	private TreeDocument doc;
+	/** The text stored in this node. */
+	private String				text;
 	
+	/** The weight. */
+	private double				weight;
+	
+	/** The weighter. */
+	private Weighter			weighter;
+	
+	/** The corresponding document. */
+	private TreeDocument	doc;
+	
+	
+	/**
+	 * Copies a text node.
+	 * 
+	 * @param toCopy
+	 *          the node to copy
+	 */
 	public TextNode (TextNode toCopy)
 	{
 		super (TreeNode.TEXT_NODE, null, null, 0);
@@ -44,36 +58,66 @@ public class TextNode
 		weighter = toCopy.weighter;
 	}
 	
-	public TextNode (String text, DocumentNode parent, TreeDocument doc, int numChild, Weighter w, int level)//, NodeMapper<TreeNode> pathMapper, MultiNodeMapper<TreeNode> hashMapper, MultiNodeMapper<DocumentNode> tagMapper, Vector<TreeNode> subtreesBySize)
+	
+	/**
+	 * Instantiates a new text node.
+	 * 
+	 * @param text
+	 *          the text stored in this node
+	 * @param parent
+	 *          the parent node in the tree
+	 * @param doc
+	 *          the document
+	 * @param numChild
+	 *          the number of that child among its siblings
+	 * @param w
+	 *          the weighter
+	 * @param level
+	 *          the level in the tree
+	 */
+	public TextNode (String text, DocumentNode parent, TreeDocument doc,
+		int numChild, Weighter w, int level)
 	{
 		super (TreeNode.TEXT_NODE, parent, doc, level);
-		this.text = text;//element.getNodeValue ();
+		this.text = text;
+		
 		// create xpath
 		if (parent == null)
 			xPath = "";
 		else
 			xPath = parent.getXPath ();
-		xPath += "/"+TEXT_TAG+"[" + numChild + "]";
-		//pathMapper.putNode (xPath, this);
-		//tagMapper.addNode ("text()", this);
+		xPath += "/" + TEXT_TAG + "[" + numChild + "]";
 		
 		ownHash = GeneralTools.hash (text);
 		
-		//hashMapper.addNode (ownHash, this);
 		weighter = w;
 		weight = w.getWeight (this);
 		
-		//subtreesBySize.add (this);
 		doc.integrate (this);
 	}
 	
-
-
+	
+	/**
+	 * Gets the text content of this node.
+	 * 
+	 * @return the text
+	 */
+	public String getText ()
+	{
+		return text;
+	}
+	
+	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.unirostock.sems.xmlutils.ds.TreeNode#evaluate(de.unirostock.sems.xmlutils
+	 * .comparison.ConnectionManager)
+	 */
 	@Override
 	public boolean evaluate (ConnectionManager conMgmr)
 	{
-		LOGGER.debug ("evaluate " + xPath);
-		
 		setModification (UNCHANGED);
 		
 		Connection con = conMgmr.getConnectionForNode (this);
@@ -94,101 +138,111 @@ public class TextNode
 			addModification (MOVED);
 		}
 		
-		
-		/*Vector<Connection> cons = conMgmr.getConnectionsForNode (this);
-		if (cons == null || cons.size () == 0)
-		{
-			addModification (UNMAPPED);
-			return true;
-		}
-		
-		if (cons.size () == 1)
-		{
-			Connection c = cons.elementAt (0);
-			TreeNode partner = c.getPartnerOf (this);
-			
-			// changed?
-			if (contentDiffers (partner))
-				addModification (MODIFIED);
-			
-			// mapped, glued?
-			// must have a connection
-			if (conMgmr.getConnectionsForNode (partner).size () > 1)
-			{
-				addModification (GLUED);
-			}
-			// moved?
-			if (networkDiffers (partner, conMgmr, c))
-			{
-				addModification (MOVED);
-			}
-		}
-		if (cons.size () > 1)
-		{
-			// check if each of them has only 1 connection, otherwise there's smth wrong
-			for (Connection c : cons)
-			{
-				TreeNode partner = c.getPartnerOf (this);
-				if (conMgmr.getConnectionsForNode (partner).size () != 1)
-					throw new UnsupportedOperationException ("moved and glued!?");
-				if ((modified & MODIFIED) == 0 && contentDiffers (partner))
-					addModification (MODIFIED);
-			}
-			addModification (MOVED);
-			addModification (COPIED);
-		}*/
-
-		LOGGER.debug ("mod: " + modified);
+		LOGGER.debug ("mod: " + modified + "(" + xPath + ")");
 		return (modified & (MODIFIED | MOVED | UNMAPPED)) != 0;
 	}
 	
+	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.unirostock.sems.xmlutils.ds.TreeNode#contentDiffers(de.unirostock.sems
+	 * .xmlutils.ds.TreeNode)
+	 */
 	protected boolean contentDiffers (TreeNode tn)
 	{
+		// different type?
 		if (tn.type != type)
 			return true;
-		if (!text.equals (((TextNode)tn).text))
+		
+		// different content?
+		if (!text.equals ( ((TextNode) tn).text))
 			return true;
+		
+		// ok, seems to be the same
 		return false;
 	}
-
+	
+	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.unirostock.sems.xmlutils.ds.TreeNode#dump(java.lang.String)
+	 */
 	@Override
 	public String dump (String prefix)
 	{
 		return prefix + xPath + " -> " + modified + "\n";
 	}
-
+	
+	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.unirostock.sems.xmlutils.ds.TreeNode#getSubDoc(org.w3c.dom.Document,
+	 * org.w3c.dom.Element)
+	 */
 	@Override
 	public void getSubDoc (Document doc, Element parent)
 	{
 		parent.appendChild (doc.createTextNode (text));
 	}
-
+	
+	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.unirostock.sems.xmlutils.ds.TreeNode#reSetupStructureDown(de.unirostock
+	 * .sems.xmlutils.ds.TreeDocument, int)
+	 */
 	@Override
 	protected void reSetupStructureDown (TreeDocument doc, int numChild)
 	{
+		// seperate this node
 		if (this.doc != null)
 			this.doc.separate (this);
+		
+		// looks like we need the doc argument?
 		this.doc = doc;
+		
+		// recalculate the properties
 		this.xPath = parent.xPath + "/" + TEXT_TAG + "[" + numChild + "]";
 		this.level = parent.level + 1;
 		
+		// integrate into (new) doc
 		this.doc.integrate (this);
 	}
-
+	
+	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.unirostock.sems.xmlutils.ds.TreeNode#reSetupStructureUp()
+	 */
 	@Override
 	protected void reSetupStructureUp ()
 	{
 		this.doc.separate (this);
 		ownHash = GeneralTools.hash (text);
 		this.doc.integrate (this);
-
+		
 		weight = weighter.getWeight (this);
 		
 		if (parent != null)
 			parent.reSetupStructureUp ();
 		
 	}
-
+	
+	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.unirostock.sems.xmlutils.ds.TreeNode#getNodeStats(java.util.HashMap)
+	 */
 	@Override
 	public void getNodeStats (HashMap<String, Integer> map)
 	{
@@ -198,31 +252,47 @@ public class TextNode
 		else
 			map.put (TEXT_TAG, i + 1);
 	}
-
+	
+	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.unirostock.sems.xmlutils.ds.TreeNode#getWeight()
+	 */
 	@Override
 	public double getWeight ()
 	{
 		return weight;
 	}
-
+	
+	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.unirostock.sems.xmlutils.ds.TreeNode#getOwnHash()
+	 */
 	@Override
 	public String getOwnHash ()
 	{
 		return ownHash;
 	}
 	
-	public String getText ()
-	{
-		return text;
-	}
 	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.unirostock.sems.xmlutils.ds.TreeNode#getSubTreeHash()
+	 */
 	@Override
 	public String getSubTreeHash ()
 	{
-		return getOwnHash ();
+		return ownHash;
 	}
 	
-	/* (non-Javadoc)
+	
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	public String toString ()

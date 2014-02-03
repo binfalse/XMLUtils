@@ -15,41 +15,91 @@ import de.unirostock.sems.xmlutils.comparison.ConnectionManager;
 
 
 /**
+ * The abstract class TreeNode representing a node in a document tree.
+ * 
  * @author Martin Scharm
- *
  */
 public abstract class TreeNode
 {
-	public static final String TEXT_TAG = "text()";
 	
-	public static final int UNCHANGED = 0;
-	public static final int UNMAPPED = 1;
-	public static final int MOVED = 2;
-	public static final int MODIFIED = 4;
-	public static final int SUB_MODIFIED = 8;
-	public static final int COPIED = 16;
-	public static final int GLUED = 32;
-	public static final int KIDSSWAPPED = 64;
-	public static final int SWAPPEDKID = 128;
-	public static final int SUBTREEUNMAPPED = 256;
+	/** The node tag name for text nodes, as we will use it in XPath expressions. */
+	public static final String	TEXT_TAG				= "text()";
 	
-	public static final int DOC_NODE = 1;
-	public static final int TEXT_NODE = 2;
+	/** UNCHANGED => node hasn't changes. */
+	public static final int			UNCHANGED				= 0;
+	
+	/** UNMAPPED => node wasn't mapped. */
+	public static final int			UNMAPPED				= 1;
+	
+	/** MOVED => node has moves. */
+	public static final int			MOVED						= 2;
+	
+	/** MODIFIED => node was modified. */
+	public static final int			MODIFIED				= 4;
+	
+	/** SUB_MODIFIED => the corresponding subtree was modified. */
+	public static final int			SUB_MODIFIED		= 8;
+	
+	/** COPIED => node was copied. */
+	public static final int			COPIED					= 16;
+	
+	/** GLUED => node was glued. */
+	public static final int			GLUED						= 32;
+	
+	/** KIDSSWAPPED => the sequence of kids of this node were altered. */
+	public static final int			KIDSSWAPPED			= 64;
+	
+	/** SWAPPEDKID => this is a swapped kid. */
+	public static final int			SWAPPEDKID			= 128;
+	
+	/** SUBTREEUNMAPPED => the whole subtree is unmapped. */
+	public static final int			SUBTREEUNMAPPED	= 256;
+	
+	/**
+	 * DOC_NODE this is a DocumentNode.
+	 * 
+	 * @see de.unirostock.sems.xmlutils.ds.DocumentNode
+	 */
+	public static final int			DOC_NODE				= 1;
+	
+	/**
+	 * TEXT_NODE this is a TextNode.
+	 * 
+	 * @see de.unirostock.sems.xmlutils.ds.TextNode
+	 */
+	public static final int			TEXT_NODE				= 2;
+	
+	/** The current modification state. */
+	protected int								modified;
+	
+	/** The node type. */
+	protected int								type;
+	
+	/** The XPath of this node. */
+	protected String						xPath;
+	
+	/** The parent node. */
+	protected DocumentNode			parent;
+	
+	/** The corresponding document. */
+	protected TreeDocument			doc;
+	
+	/** The level in the tree document. */
+	protected int								level;
 	
 	
-	protected int modified;
-	
-	protected int type;
-	/** The x path. */
-	protected String xPath;
-	
-	/** The parent. */
-	protected DocumentNode parent;
-	
-	protected TreeDocument doc;
-	
-	protected int level;
-	
+	/**
+	 * Instantiates a new tree node.
+	 * 
+	 * @param type
+	 *          the node type
+	 * @param parent
+	 *          the parent node
+	 * @param doc
+	 *          the corresponding document
+	 * @param level
+	 *          the level in the tree
+	 */
 	public TreeNode (int type, DocumentNode parent, TreeDocument doc, int level)
 	{
 		this.doc = doc;
@@ -59,9 +109,10 @@ public abstract class TreeNode
 		this.level = level;
 	}
 	
+	
 	/**
 	 * Returns the level of this node in its tree. Root has level 0.
-	 *
+	 * 
 	 * @return the level
 	 */
 	public int getLevel ()
@@ -69,57 +120,117 @@ public abstract class TreeNode
 		return level;
 	}
 	
+	
+	/**
+	 * Returns the modification state.
+	 * 
+	 * @return the modification
+	 */
 	public int getModification ()
 	{
 		return modified;
 	}
 	
+	
+	/**
+	 * Remove a modification.
+	 * 
+	 * @param mod
+	 *          the modification
+	 */
 	public void rmModification (int mod)
 	{
 		this.modified &= ~mod;
 	}
 	
+	
+	/**
+	 * Add a modification.
+	 * 
+	 * @param mod
+	 *          the modification
+	 */
 	public void addModification (int mod)
 	{
 		this.modified |= mod;
 	}
 	
+	
+	/**
+	 * Sets the modification.
+	 * 
+	 * @param mod
+	 *          the new modification
+	 */
 	public void setModification (int mod)
 	{
 		this.modified = mod;
 	}
 	
+	
+	/**
+	 * Checks for a certain modification.
+	 * 
+	 * @param mod
+	 *          the modification
+	 * @return true, if this node has modification mod
+	 */
 	public boolean hasModification (int mod)
 	{
 		return (this.modified & mod) > 0;
 	}
 	
+	
+	/**
+	 * Gets the node type.
+	 * 
+	 * @return the node type
+	 * 
+	 * @see de.unirostock.sems.xmlutils.ds.TreeNode.DOC_NODE
+	 * @see de.unirostock.sems.xmlutils.ds.TreeNode.TEXT_NODE
+	 */
 	public int getType ()
 	{
 		return type;
 	}
-
 	
+	
+	/**
+	 * Gets the parent node.
+	 * 
+	 * @return the parent node
+	 */
 	public DocumentNode getParent ()
 	{
 		return parent;
 	}
 	
+	
 	/**
-	 * Gets the x path.
-	 *
-	 * @return the x path
+	 * Gets the XPath expression corresponding to this node.
+	 * 
+	 * @return the XPath to the node
 	 */
 	public String getXPath ()
 	{
 		return xPath;
 	}
 	
+	
+	/**
+	 * Checks if this is the root of the tree.
+	 * 
+	 * @return true, if this is root
+	 */
 	public boolean isRoot ()
 	{
 		return parent == null;
 	}
 	
+	
+	/**
+	 * Resets all modifications.
+	 */
 	public void resetModifications ()
 	{
 		this.modified = UNCHANGED;
@@ -131,25 +242,32 @@ public abstract class TreeNode
 		}
 	}
 	
+	
+	/**
+	 * Gets the corresponding document.
+	 * 
+	 * @return the document
+	 */
 	public TreeDocument getDocument ()
 	{
 		return doc;
 	}
 	
 	
-	public abstract double getWeight ();
-	public abstract String getOwnHash ();
 	/**
-	 * Gets the calculated hash of this subtree, in TextNodes it equals the own hash.
-	 *
-	 * @return the hash
+	 * Checks if the network of two nodes differs.
+	 * 
+	 * @param tn
+	 *          the node in another tree document
+	 * @param conMgmr
+	 *          the connection manager
+	 * @param c
+	 *          the connection
+	 * @return true, if parents of these nodes are <strong>not</strong> connected.
 	 */
-	public abstract String getSubTreeHash ();
-
-	public abstract boolean evaluate (ConnectionManager conMgmr);
-	public boolean networkDiffers (TreeNode tn, ConnectionManager conMgmr, Connection c)
+	public boolean networkDiffers (TreeNode tn, ConnectionManager conMgmr,
+		Connection c)
 	{
-		//System.out.println ("checking : " + getXPath () + " -> " + tn.getXPath ());
 		DocumentNode p = getParent ();
 		DocumentNode tnp = tn.getParent ();
 		
@@ -161,19 +279,9 @@ public abstract class TreeNode
 		if (p == null || tnp == null)
 			return true;
 		
-		//System.out.println ("netw diff : " + getXPath () + " -> " + tn.getXPath ());
-		//System.out.println ("netw diff parents : " + p.getXPath () + " -> " + tnp.getXPath ());
-
-		
 		// parents connected and same child no.?
 		if (!conMgmr.parentsConnected (c))
-		//if ( (c))
 		{
-			/*System.out.println ("nodes: " + ((DocumentNode) this).getAttribute ("species") + "->" + getXPath () + " --- " + ((DocumentNode) tn).getAttribute ("species") + "->" + tn.getXPath ());
-			System.out.println ("parents: " + p.getXPath () + " --- " + tnp.getXPath ());
-		System.out.println ("p1: " + conMgmr.getConnectionOfNodes (p, tnp));
-		System.out.println ("p2: " + conMgmr.parentsConnected (c));*/
-			//System.out.println ("parents not connected: ");
 			if (p != null)
 				p.addModification (SUB_MODIFIED);
 			if (tnp != null)
@@ -181,29 +289,118 @@ public abstract class TreeNode
 			return true;
 		}
 		
-		//System.out.println ("par connected");
-		
 		if (p.getNoOfChild (this) != tnp.getNoOfChild (tn))
 		{
 			p.addModification (KIDSSWAPPED);
 			tnp.addModification (KIDSSWAPPED);
 			addModification (SWAPPEDKID);
 			tn.addModification (SWAPPEDKID);
-			//return true;
 		}
-		
-		//System.out.println ("same child no");
 		
 		return false;
 	}
+	
+	
+	/**
+	 * Gets the weight of this node.
+	 * 
+	 * @return the weight
+	 */
+	public abstract double getWeight ();
+	
+	
+	/**
+	 * Gets the hash of this single node (w/o its subtree).
+	 * 
+	 * @return the hash of the node
+	 */
+	public abstract String getOwnHash ();
+	
+	
+	/**
+	 * Gets the calculated hash of the subtree rooted in this node, in TextNodes
+	 * it equals the own hash.
+	 * 
+	 * @return the hash of the current subtree
+	 */
+	public abstract String getSubTreeHash ();
+	
+	
+	/**
+	 * Evaluate the modifications of this node. Just useful for tree comparisons.
+	 * 
+	 * @param conMgmr
+	 *          the connection manager
+	 * @return true, if node was changed
+	 */
+	public abstract boolean evaluate (ConnectionManager conMgmr);
+	
+	
+	/**
+	 * Check if content between two nodes differs. Just compares the nodes,
+	 * neglects everything else of the tree.
+	 * 
+	 * @param tn
+	 *          the other node to compare
+	 * @return true, if nodes differ
+	 */
 	protected abstract boolean contentDiffers (TreeNode tn);
+	
+	
+	/**
+	 * Dump this node. Just for debugging purposes..
+	 * 
+	 * @param prefix
+	 *          the prefix for a line (indention)
+	 * @return the produced dump
+	 */
 	public abstract String dump (String prefix);
 	
+	
+	/**
+	 * Attaches the subtree rooted in this node to the node parent of the document
+	 * doc. Recursively attaches its children.
+	 * If the parent is null, this node becomes root of doc. Will fail for
+	 * 
+	 * <code>
+	 * parent == null && this.getType () == TreeNode.TEXT_NODE
+	 * </code>
+	 * 
+	 * That means a text node cannot become root.
+	 * 
+	 * @param doc
+	 *          the document to write our node to
+	 * @param parent
+	 *          the parent element which will root the node. If null, this node
+	 *          will be root in the document
+	 */
 	public abstract void getSubDoc (Document doc, Element parent);
 	
+	
+	/**
+	 * Re-setup the document structure downwards. (e.g. recompute XPaths etc.)
+	 * 
+	 * @param doc
+	 *          the document this node corresponds to
+	 * @param numChild
+	 *          the child number of this node
+	 */
 	protected abstract void reSetupStructureDown (TreeDocument doc, int numChild);
 	
+	
+	/**
+	 * Re-setup the document structure upwards. (e.g. recompute hashes etc.)
+	 */
 	protected abstract void reSetupStructureUp ();
 	
+	
+	/**
+	 * Gets the node statistics of the subtree rooted in this node: tagname =>
+	 * number nodes having this tag name.
+	 * 
+	 * @param map
+	 *          the map to write our statistics to
+	 * @return the node statistics
+	 */
 	public abstract void getNodeStats (HashMap<String, Integer> map);
 }

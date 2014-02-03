@@ -6,16 +6,21 @@ package de.unirostock.sems.xmlutils.ds;
 import java.util.Comparator;
 
 
+
 /**
- * The Class TreeNodeComparatorBySubtreeSize to compare sub-trees below nodes by size.
- *
+ * The Class TreeNodeComparatorBySubtreeSize to compare sub-trees below nodes by
+ * size. Will <strong>never</strong> report that two nodes are equal unless say
+ * are exactly the same object!
+ * 
  * @author Martin Scharm
  */
-public class TreeNodeComparatorBySubtreeSize implements Comparator<TreeNode>
+public class TreeNodeComparatorBySubtreeSize
+	implements Comparator<TreeNode>
 {
 	
 	/** reverse the comparison result? */
-	private int reverse;
+	private int	reverse;
+	
 	
 	/**
 	 * Instantiates a new comparator sorting subtrees ascending.
@@ -25,10 +30,13 @@ public class TreeNodeComparatorBySubtreeSize implements Comparator<TreeNode>
 		reverse = 1;
 	}
 	
+	
 	/**
-	 * Instantiates a new comparator. If reverse is <code>true</code> subtrees are sorted in descending order, otherwise ascending.
-	 *
-	 * @param reverse the reverse
+	 * Instantiates a new comparator. If reverse is <code>true</code> subtrees are
+	 * sorted in descending order, otherwise ascending.
+	 * 
+	 * @param reverse
+	 *          the reverse
 	 */
 	public TreeNodeComparatorBySubtreeSize (boolean reverse)
 	{
@@ -37,8 +45,11 @@ public class TreeNodeComparatorBySubtreeSize implements Comparator<TreeNode>
 		else
 			this.reverse = 1;
 	}
-
-	/* (non-Javadoc)
+	
+	
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
 	 */
 	public int compare (TreeNode o1, TreeNode o2)
@@ -46,15 +57,21 @@ public class TreeNodeComparatorBySubtreeSize implements Comparator<TreeNode>
 		return reverse * privateCompare (o1, o2);
 	}
 	
+	
 	/**
 	 * really compares the nodes.
-	 *
-	 * @param o1 node one
-	 * @param o2 node two
+	 * 
+	 * @param o1
+	 *          node one
+	 * @param o2
+	 *          node two
 	 * @return the ascending order
 	 */
 	private int privateCompare (TreeNode o1, TreeNode o2)
 	{
+		if (o1 == o2)
+			return 0;
+		
 		// textnodes are always the smallest nodes
 		if (o2.getType () == TreeNode.TEXT_NODE)
 			return 1;
@@ -78,15 +95,17 @@ public class TreeNodeComparatorBySubtreeSize implements Comparator<TreeNode>
 		if (w1 > w2)
 			return 1;
 		
-		int a1 = ((DocumentNode) o1).getAttributes ().size (), a2 = ((DocumentNode) o2).getAttributes ().size ();
+		int a1 = ((DocumentNode) o1).getAttributes ().size (), a2 = ((DocumentNode) o2)
+			.getAttributes ().size ();
 		
 		// if that also equals, compare number of arguments
 		if (a1 < a2)
 			return -1;
 		if (a1 > a2)
 			return 1;
-		// ok ok, they have equal priority...
-		return 0;
+		
+		// ok ok, they have equal priority... but we won't return 0, because
+		return -1;
 	}
 	
 }
