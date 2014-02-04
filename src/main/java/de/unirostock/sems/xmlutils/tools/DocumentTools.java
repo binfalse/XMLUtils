@@ -126,7 +126,7 @@ public class DocumentTools
 	
 	/**
 	 * Transform content MathML to display MathML, e.g. to display the MathML in a
-	 * browser.
+	 * browser. This operation can be very expensive.
 	 * 
 	 * @param doc
 	 *          the document node rooting the MathML subtree

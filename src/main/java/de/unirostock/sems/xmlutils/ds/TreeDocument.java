@@ -191,7 +191,7 @@ public class TreeDocument
 	 * @param node
 	 *          the node to integrate
 	 */
-	public void integrate (TreeNode node)
+	public void integrate (TreeNode node, boolean recursively)
 	{
 		pathMapper.putNode (node.getXPath (), node);
 		subtreesBySize.add (node);
@@ -204,17 +204,23 @@ public class TreeDocument
 			if (id != null)
 			{
 				if (idMapper.getNode (id) != null)
+				{
 					uniqueIds = false;
+				}
 				else
 					idMapper.putNode (id, dnode);
 			}
-			// integrate all children
-			Vector<TreeNode> kids = dnode.getChildren ();
-			for (TreeNode tn : kids)
-				integrate (tn);
+			if (recursively)
+			{
+				// integrate all children
+				Vector<TreeNode> kids = dnode.getChildren ();
+				for (TreeNode tn : kids)
+					integrate (tn, recursively);
+			}
 		}
 		else
 			textNodes.add ((TextNode) node);
+		node.doc = this;
 	}
 	
 	
@@ -225,7 +231,7 @@ public class TreeDocument
 	 * @param node
 	 *          the node
 	 */
-	public void separate (TreeNode node)
+	public void separate (TreeNode node, boolean recursively)
 	{
 		pathMapper.rmNode (node.getXPath ());
 		subtreesBySize.remove (node);
@@ -236,14 +242,20 @@ public class TreeDocument
 			DocumentNode dnode = (DocumentNode) node;
 			tagMapper.rmNode (dnode.getTagName (), dnode);
 			if (dnode.getId () != null)
+			{
 				idMapper.rmNode (dnode.getId ());
-			// separate all children
-			Vector<TreeNode> kids = dnode.getChildren ();
-			for (TreeNode tn : kids)
-				separate (tn);
+			}
+			if (recursively)
+			{
+				// separate all children
+				Vector<TreeNode> kids = dnode.getChildren ();
+				for (TreeNode tn : kids)
+					separate (tn, recursively);
+			}
 		}
 		else
 			textNodes.remove (node);
+		node.doc = null;
 	}
 	
 	

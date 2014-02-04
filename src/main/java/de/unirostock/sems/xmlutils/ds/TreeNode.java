@@ -87,6 +87,9 @@ public abstract class TreeNode
 	/** The level in the tree document. */
 	protected int								level;
 	
+	/** The hash of this single node */
+	protected String						ownHash;
+	
 	
 	/**
 	 * Instantiates a new tree node.
@@ -302,6 +305,22 @@ public abstract class TreeNode
 	
 	
 	/**
+	 * Check if content between two nodes differs. Just compares the nodes,
+	 * neglects everything else of the tree (e.g. network, kids etc).
+	 * 
+	 * @param tn
+	 *          the other node to compare
+	 * @return true, if nodes differ
+	 */
+	public boolean contentDiffers (TreeNode tn)
+	{
+		if (type != tn.type)
+			return true;
+		return !ownHash.equals (tn.ownHash);
+	}
+	
+	
+	/**
 	 * Gets the weight of this node.
 	 * 
 	 * @return the weight
@@ -334,17 +353,6 @@ public abstract class TreeNode
 	 * @return true, if node was changed
 	 */
 	public abstract boolean evaluate (ConnectionManager conMgmr);
-	
-	
-	/**
-	 * Check if content between two nodes differs. Just compares the nodes,
-	 * neglects everything else of the tree.
-	 * 
-	 * @param tn
-	 *          the other node to compare
-	 * @return true, if nodes differ
-	 */
-	protected abstract boolean contentDiffers (TreeNode tn);
 	
 	
 	/**

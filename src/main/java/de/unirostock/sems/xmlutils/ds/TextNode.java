@@ -25,9 +25,6 @@ public class TextNode
 	extends TreeNode
 {
 	
-	/** The hash of this node. */
-	private String				ownHash;
-	
 	/** The text stored in this node. */
 	private String				text;
 	
@@ -36,9 +33,6 @@ public class TextNode
 	
 	/** The weighter. */
 	private Weighter			weighter;
-	
-	/** The corresponding document. */
-	private TreeDocument	doc;
 	
 	
 	/**
@@ -93,7 +87,7 @@ public class TextNode
 		weighter = w;
 		weight = w.getWeight (this);
 		
-		doc.integrate (this);
+		doc.integrate (this, false);
 	}
 	
 	
@@ -146,28 +140,6 @@ public class TextNode
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * de.unirostock.sems.xmlutils.ds.TreeNode#contentDiffers(de.unirostock.sems
-	 * .xmlutils.ds.TreeNode)
-	 */
-	protected boolean contentDiffers (TreeNode tn)
-	{
-		// different type?
-		if (tn.type != type)
-			return true;
-		
-		// different content?
-		if (!text.equals ( ((TextNode) tn).text))
-			return true;
-		
-		// ok, seems to be the same
-		return false;
-	}
-	
-	
-	/*
-	 * (non-Javadoc)
-	 * 
 	 * @see de.unirostock.sems.xmlutils.ds.TreeNode#dump(java.lang.String)
 	 */
 	@Override
@@ -203,7 +175,7 @@ public class TextNode
 	{
 		// seperate this node
 		if (this.doc != null)
-			this.doc.separate (this);
+			this.doc.separate (this, false);
 		
 		// looks like we need the doc argument?
 		this.doc = doc;
@@ -213,7 +185,8 @@ public class TextNode
 		this.level = parent.level + 1;
 		
 		// integrate into (new) doc
-		this.doc.integrate (this);
+		if (this.doc != null)
+			this.doc.integrate (this, false);
 	}
 	
 	
@@ -225,9 +198,9 @@ public class TextNode
 	@Override
 	protected void reSetupStructureUp ()
 	{
-		this.doc.separate (this);
+		this.doc.separate (this, false);
 		ownHash = GeneralTools.hash (text);
-		this.doc.integrate (this);
+		this.doc.integrate (this, false);
 		
 		weight = weighter.getWeight (this);
 		

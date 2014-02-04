@@ -4,6 +4,7 @@
 package de.unirostock.sems.xmlutils;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -11,12 +12,14 @@ import static org.junit.Assert.fail;
 import java.io.File;
 import java.security.SecureRandom;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 import java.util.Vector;
 
 import javax.xml.transform.TransformerException;
 
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -28,6 +31,7 @@ import de.unirostock.sems.xmlutils.ds.NodeDistanceComparator;
 import de.unirostock.sems.xmlutils.ds.TextNode;
 import de.unirostock.sems.xmlutils.ds.TreeDocument;
 import de.unirostock.sems.xmlutils.ds.TreeNode;
+import de.unirostock.sems.xmlutils.exception.XmlDocumentConsistencyException;
 import de.unirostock.sems.xmlutils.tools.DocumentTools;
 import de.unirostock.sems.xmlutils.tools.XmlTools;
 
@@ -44,6 +48,48 @@ public class XmlTest
 	private static final File		SIMPLE_DOC	= new File ("test/simple.xml");
 	private static final File		MATHML_DOC	= new File ("test/mathml.xml");
 	private static final double	EPSILON			= 0.0001;
+
+	private static TreeDocument mathmlFile;
+	private static TreeDocument simpleFile;
+
+	@BeforeClass
+	public static void readFiles ()
+	{
+		LOGGER.debug ("preread");
+		if (SIMPLE_DOC.canRead ())
+		{
+			try
+			{
+				simpleFile = new TreeDocument (XmlTools.readDocument (SIMPLE_DOC), null);
+			}
+			catch (Exception e)
+			{
+				LOGGER.error ("cannot read " + SIMPLE_DOC + " -> skipping tests", e);
+			}
+		}
+		else
+		{
+			LOGGER.error ("cannot read " + SIMPLE_DOC + " -> skipping tests");
+		}
+		LOGGER.debug ("now math");
+		if (MATHML_DOC.canRead ())
+		{
+			try
+			{
+				mathmlFile = new TreeDocument (XmlTools.readDocument (MATHML_DOC), null);
+			}
+			catch (Exception e)
+			{
+				LOGGER.error ("cannot read " + MATHML_DOC + " -> skipping tests", e);
+			}
+		}
+		else
+		{
+			LOGGER.error ("cannot read " + MATHML_DOC + " -> skipping tests");
+		}
+		LOGGER.debug ("postread");
+		LOGGER.setLevel (LOGGER.DEBUG);
+	}
 	
 	
 	@Test
@@ -88,23 +134,14 @@ public class XmlTest
 	@Test
 	public void testTreeNodeComparatorBySubtreeSize ()
 	{
-		if (!SIMPLE_DOC.canRead ())
+		if (simpleFile == null)
 		{
-			LOGGER.error ("cannot read " + SIMPLE_DOC + " -> skipping test");
+			LOGGER.error ("cannot read simpleFile -> skipping test");
 			return;
 		}
-		TreeDocument simpleDoc = null;
-		try
-		{
-			simpleDoc = new TreeDocument (XmlTools.readDocument (SIMPLE_DOC), null);
-		}
-		catch (Exception e)
-		{
-			fail ("failed to parse " + SIMPLE_DOC);
-		}
 		
-		TreeNode[] subTrees = simpleDoc.getSubtreesBySize ();
-		DocumentNode root = simpleDoc.getRoot ();
+		TreeNode[] subTrees = simpleFile.getSubtreesBySize ();
+		DocumentNode root = simpleFile.getRoot ();
 		assertEquals ("num subtrees doesn't equal number of nodes",
 			root.getSizeSubtree () + 1, subTrees.length);
 		
@@ -122,26 +159,17 @@ public class XmlTest
 	@Test
 	public void testMathML ()
 	{
-		XmlTest.class.getResource ("/res/mmlctop2_0.xsl");
-		
-		if (!MATHML_DOC.canRead ())
+		if (mathmlFile == null)
 		{
-			LOGGER.error ("cannot read " + MATHML_DOC + " -> skipping test");
+			LOGGER.error ("cannot read mathmlFile -> skipping test");
 			return;
 		}
-		TreeDocument simpleDoc = null;
-		try
-		{
-			simpleDoc = new TreeDocument (XmlTools.readDocument (MATHML_DOC), null);
-		}
-		catch (Exception e)
-		{
-			fail ("failed to parse " + MATHML_DOC);
-		}
+		
+		assertNotNull ("cannot find mathml converter xsl", XmlTest.class.getResource ("/res/mmlctop2_0.xsl"));
 		
 		try
 		{
-			String orig = DocumentTools.printSubDoc (simpleDoc.getRoot ());
+			String orig = DocumentTools.printSubDoc (mathmlFile.getRoot ());
 			// test for typical content functions.
 			assertTrue (
 				"original mathml doesn't seem to be content mathml",
@@ -149,7 +177,7 @@ public class XmlTest
 					&& orig.contains ("<ci>"));
 			
 			String presentation = DocumentTools
-				.transformMathML (simpleDoc.getRoot ());
+				.transformMathML (mathmlFile.getRoot ());
 			
 			// test for non content mathml plus some typical presentation mathml stuff
 			assertTrue (
@@ -169,39 +197,30 @@ public class XmlTest
 	@Test
 	public void testSimpleXml ()
 	{
-		if (!SIMPLE_DOC.canRead ())
+		if (simpleFile == null)
 		{
-			LOGGER.error ("cannot read " + SIMPLE_DOC + " -> skipping test");
+			LOGGER.error ("cannot read simpleFile -> skipping test");
 			return;
-		}
-		TreeDocument simpleDoc = null;
-		try
-		{
-			simpleDoc = new TreeDocument (XmlTools.readDocument (SIMPLE_DOC), null);
-		}
-		catch (Exception e)
-		{
-			fail ("failed to parse " + SIMPLE_DOC);
 		}
 		
 		assertTrue ("uniques are unique but doc reports they aren't",
-			simpleDoc.uniqueIds ());
+			simpleFile.uniqueIds ());
 		
-		DocumentNode root = simpleDoc.getRoot ();
+		DocumentNode root = simpleFile.getRoot ();
 		int numNodes = root.getSizeSubtree () + 1;
 		assertEquals ("numNodes != 15", numNodes, 15);
-		assertEquals ("numNodes != getNumNodes", numNodes, simpleDoc.getNumNodes ());
-		assertEquals ("numNodes != num XPaths", numNodes, simpleDoc
+		assertEquals ("numNodes != getNumNodes", numNodes, simpleFile.getNumNodes ());
+		assertEquals ("numNodes != num XPaths", numNodes, simpleFile
 			.getOccurringXPaths ().size ());
 		
-		double treeWeight = simpleDoc.getTreeWeight ();
+		double treeWeight = simpleFile.getTreeWeight ();
 		assertEquals ("treeWeight != root.getWeight ()", treeWeight,
 			root.getWeight (), EPSILON);
 		
 		// let's loop through tree and count nodes
 		int foundNodes = 0;
 		// text nodes
-		List<TextNode> textNodes = simpleDoc.getTextNodes ();
+		List<TextNode> textNodes = simpleFile.getTextNodes ();
 		assertEquals ("expected to find exactly 6 text nodes", 6, textNodes.size ());
 		for (TextNode tn : textNodes)
 		{
@@ -211,10 +230,10 @@ public class XmlTest
 		}
 		
 		// document nodes
-		simpleDoc.getOccurringXPaths ();
-		for (String tag : simpleDoc.getOccurringTags ())
+		simpleFile.getOccurringXPaths ();
+		for (String tag : simpleFile.getOccurringTags ())
 		{
-			List<DocumentNode> dn = simpleDoc.getNodesByTag (tag);
+			List<DocumentNode> dn = simpleFile.getNodesByTag (tag);
 			assertTrue (
 				"all tags but conversations should occure exactly two times!",
 				tag.equals ("conversations") ? 1 == dn.size () : 2 == dn.size ());
@@ -263,15 +282,27 @@ public class XmlTest
 		}
 		
 		assertEquals ("numNodes != foundNodes", numNodes, foundNodes);
+	}
+	
+	@Test
+	public void testIdAndMapper ()
+	{
+		if (simpleFile == null)
+		{
+			LOGGER.error ("cannot read simpleFile -> skipping test");
+			return;
+		}
 		
-		DocumentNode reply = simpleDoc.getNodeById ("messagetwo");
+		DocumentNode root = simpleFile.getRoot ();
+		
+		DocumentNode reply = simpleFile.getNodeById ("messagetwo");
 		assertNotNull ("reply shouldn't be null", reply);
 		assertNotNull ("replies attribute shouldn't be null",
 			reply.getAttribute ("replies"));
 		assertNotNull ("replies target shouln't be null",
-			simpleDoc.getNodeById (reply.getAttribute ("replies")));
+			simpleFile.getNodeById (reply.getAttribute ("replies")));
 		
-		DocumentNode initialMessage = simpleDoc.getNodeById (reply
+		DocumentNode initialMessage = simpleFile.getNodeById (reply
 			.getAttribute ("replies"));
 		assertNotNull ("content of initial message shouldn't be null",
 			initialMessage.getChildrenWithTag ("content"));
@@ -288,6 +319,127 @@ public class XmlTest
 		assertEquals ("root should be level 0", 0, root.getLevel ());
 		assertEquals ("initial message should be lvl 3", 3, ((TextNode) content
 			.getChildren ().elementAt (0)).getLevel ());
+	}
+	
+	@Test
+	public void testDiffersAndHashesAndNodeStats ()
+	{
+		if (simpleFile == null)
+		{
+			LOGGER.error ("cannot read simpleFile -> skipping test");
+			return;
+		}
+		
+		DocumentNode reply = simpleFile.getNodeById ("messagetwo");
+		DocumentNode initialMessage = simpleFile.getNodeById (reply
+			.getAttribute ("replies"));
+		// test content differs and hashes and weights
+		List<DocumentNode> nodes = simpleFile.getNodesByTag ("message");
+		assertEquals ("expected to find exactly two message nodes", 2, nodes.size ());
+		assertTrue ("content between two different nodes should differ", nodes.get (0).contentDiffers (nodes.get (1)));
+		assertFalse ("content of the same node shouldn't differ", nodes.get (0).contentDiffers (nodes.get (0)));
+		
+		nodes = simpleFile.getNodesByTag ("to");
+		assertEquals ("expected to find exactly two <to> nodes", 2, nodes.size ());
+		assertFalse ("content between the two <to> nodes shouldn't differ", nodes.get (0).contentDiffers (nodes.get (1)));
+
+		List<TreeNode> initTo = initialMessage.getChildrenWithTag ("to");
+		List<TreeNode> initFrom = initialMessage.getChildrenWithTag ("from");
+		List<TreeNode> replyFrom = reply.getChildrenWithTag ("from");
+		assertTrue ("initial and reply are supposed to have exactly one <to>/<two>", initTo.size () == replyFrom.size () && initTo.size () == 1);
+		TreeNode ito = initTo.get (0);
+		TreeNode ifrom = initFrom.get (0);
+		TreeNode rfrom = replyFrom.get (0);
+		assertTrue ("content of the nodes w/ different tag names should differ", ito.contentDiffers (rfrom));
+		assertFalse ("content of the nodes w/ same tag names should differ", ifrom.contentDiffers (rfrom));
+		DocumentNode dito = (DocumentNode) ito;
+		DocumentNode difrom = (DocumentNode) ifrom;
+		DocumentNode drfrom = (DocumentNode) rfrom;
+		assertEquals ("nodes should have exactly one child", 1, dito.getNumChildren ());
+		assertEquals ("nodes should have exactly one child", 1, difrom.getNumChildren ());
+		assertEquals ("nodes should have exactly one child", 1, drfrom.getNumChildren ());
+		// check text nodes
+		assertFalse ("content of the text nodes w/ same text shouldn't differ", dito.getChildren ().elementAt (0).contentDiffers (drfrom.getChildren ().elementAt (0)));
+		assertTrue ("content of the text nodes w/ different text should differ", difrom.getChildren ().elementAt (0).contentDiffers (drfrom.getChildren ().elementAt (0)));
+		// check different node types
+		assertTrue ("content of the different node types should differ", dito.getChildren ().elementAt (0).contentDiffers (drfrom));
+		// check weights
+		assertEquals ("weights of the similar subtrees (only different tag names) should be equal", ito.getWeight (), rfrom.getWeight (), EPSILON);
+		assertEquals ("weights of the similar subtrees (only different texts, but same length) should be equal", ifrom.getWeight (), rfrom.getWeight (), EPSILON);
+		nodes = simpleFile.getNodesByTag ("message");
+		assertTrue ("weights of the different subtrees should differ", Math.abs (nodes.get (0).getWeight () - nodes.get (1).getWeight ()) > EPSILON);
+		
+		// check node stats
+		HashMap<String, Integer> stats0 = new HashMap<String, Integer> ();
+		HashMap<String, Integer> stats1 = new HashMap<String, Integer> ();
+		nodes.get (0).getNodeStats (stats0);
+		nodes.get (1).getNodeStats (stats1);
+		// stats should equal
+		for (String s : stats0.keySet ())
+		{
+			assertNotNull ("stats key " + s + " in 1 shouldn't be null", stats1.get (s));
+			assertEquals ("stats key " + s + " in 1 should equal 0", stats1.get (s), stats0.get (s));
+		}
+		// and the other way around
+		for (String s : stats1.keySet ())
+		{
+			assertNotNull ("stats key " + s + " in 0 shouldn't be null", stats0.get (s));
+			assertEquals ("stats key " + s + " in 1 should equal 0", stats1.get (s), stats0.get (s));
+		}
+	}
+	
+	@Test
+	public void testRemoveAndInsert ()
+	{
+		if (simpleFile == null)
+		{
+			LOGGER.error ("cannot read simpleFile -> skipping test");
+			return;
+		}
+
+		DocumentNode root = simpleFile.getRoot ();
+		List<DocumentNode> nodes = simpleFile.getNodesByTag ("message");
+		
+		// check the remove and insert things to compute new hashes
+		DocumentNode extract = nodes.get (0);
+		// store node stuff
+		String extractPrevXpath = extract.getXPath ();
+		double extractPrevWeight = extract.getWeight ();
+		String extractPrevHash = extract.getOwnHash ();
+		String extractPrevTreeHash = extract.getSubTreeHash ();
+		// store tree stuff
+		String treePrevXpath = root.getXPath ();
+		double treePrevWeight = root.getWeight ();
+		String treePrevHash = root.getOwnHash ();
+		String treePrevTreeHash = root.getSubTreeHash ();
+		int treePrevNumXpaths = simpleFile.getOccurringXPaths ().size ();
+		boolean uniqueIds = simpleFile.uniqueIds ();
+		// remove node
+		try
+		{
+			root.rmChild (extract);
+		}
+		catch (XmlDocumentConsistencyException e)
+		{
+			fail ("we shouldn't get an exception here..");
+		}
+		// reinsert it
+		root.addChild (extract);
+		// check that everything was updated correctly
+		assertFalse ("xpath wasn't updated after remove + insert", extractPrevXpath.equals (extract.getXPath ()));
+		assertEquals ("weight was updated after remove + insert", extractPrevWeight, extract.getWeight (), EPSILON);
+		assertTrue ("own hash was updated after remove + insert", extractPrevHash.equals (extract.getOwnHash ()));
+		assertTrue ("subtree hash was updated after remove + insert", extractPrevTreeHash.equals (extract.getSubTreeHash ()));
+
+		assertEquals ("xpath was updated after remove + insert", treePrevXpath, root.getXPath ());
+		assertEquals ("weight was updated after remove + insert", treePrevWeight, root.getWeight (), EPSILON);
+		assertTrue ("own hash was updated after remove + insert", treePrevHash.equals (root.getOwnHash ()));
+		assertFalse ("subtree hash wasn't updated after remove + insert", treePrevTreeHash.equals (root.getSubTreeHash ()));
+
+		assertTrue ("num xpaths has changed after remove + insert", treePrevNumXpaths == simpleFile.getOccurringXPaths ().size ());
+		
+		assertTrue ("uniqueIds has changed after remove + insert", uniqueIds == simpleFile.uniqueIds ());
+		
 	}
 	
 	

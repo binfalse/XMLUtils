@@ -54,9 +54,6 @@ public class DocumentNode
 	/** The hash of the subtree rooted in this node. */
 	private String														subTreeHash;
 	
-	/** The hash of this single node */
-	private String														ownHash;
-	
 	/**
 	 * the number of nodes in the subtree rooted in this node. (current node
 	 * excluded)
@@ -230,7 +227,7 @@ public class DocumentNode
 			numLeaves = 1;
 		
 		weight = w.getWeight (this);
-		doc.integrate (this);
+		doc.integrate (this, false);
 	}
 	
 	
@@ -341,6 +338,7 @@ public class DocumentNode
 			childrenByTag.put (toAdd.getTagName (), new Vector<TreeNode> ());
 		children.add (toAdd);
 		// propagate downwards
+		doc.integrate (toAdd, true);
 		toAdd.reSetupStructureDown (doc, childrenByTag.get (toAdd.getTagName ())
 			.size () + 1);
 		childrenByTag.get (toAdd.getTagName ()).add (toAdd);
@@ -381,11 +379,20 @@ public class DocumentNode
 				+ " there was a node in tag-mapped children, but not in children!?");
 		}
 		
+		doc.separate (toRemove, true);
+		toRemove.parent = null;
+		toRemove.reSetupStructureDown (null, 1);
+		
 		// update parents
 		reSetupStructureUp ();
+		if (this.parent != null)
+			this.parent.reSetupStructureDown (doc, -1);
+		else
+			reSetupStructureDown (doc, -1);
 		
 		// resort subtreesizes
-		doc.resortSubtrees ();
+		if (doc != null)
+			doc.resortSubtrees ();
 	}
 	
 	
@@ -618,43 +625,6 @@ public class DocumentNode
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * de.unirostock.sems.xmlutils.ds.TreeNode#contentDiffers(de.unirostock.sems
-	 * .xmlutils.ds.TreeNode)
-	 */
-	@Override
-	protected boolean contentDiffers (TreeNode tn)
-	{
-		// same type?
-		if (tn.type != type)
-			return true;
-		
-		DocumentNode dn = (DocumentNode) tn;
-		
-		// tag?
-		if (!tagName.equals (dn.tagName))
-			return true;
-		
-		// same number of attributes?
-		if (attributes.size () != dn.attributes.size ())
-			return true;
-		
-		// ok looks like we have to compare all attribute values...
-		for (String attr : attributes.keySet ())
-		{
-			if (dn.attributes.get (attr) == null
-				|| !dn.attributes.get (attr).equals (attributes.get (attr)))
-				return true;
-		}
-		
-		// all the same -> content doesn't differ
-		return false;
-	}
-	
-	
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
 	 * de.unirostock.sems.xmlutils.ds.TreeNode#evaluate(de.unirostock.sems.xmlutils
 	 * .comparison.ConnectionManager)
 	 */
@@ -731,12 +701,18 @@ public class DocumentNode
 	{
 		// extract
 		if (this.doc != null)
-			this.doc.separate (this);
+			this.doc.separate (this, false);
 		this.doc = doc;
 		
 		// recalculate the properties
-		this.xPath = parent.xPath + "/" + tagName + "[" + numChild + "]";
-		this.level = parent.level + 1;
+		if (parent != null)
+		{
+			if (numChild > 0) // might be null if a children's child was removed
+				this.xPath = parent.xPath + "/" + tagName + "[" + numChild + "]";
+			this.level = parent.level + 1;
+		}
+		else if (numChild > 0)
+			this.xPath = "/" + tagName + "[" + numChild + "]";
 		
 		// propagate downwards
 		for (String tag : childrenByTag.keySet ())
@@ -747,7 +723,8 @@ public class DocumentNode
 		}
 		
 		// integrate into (new) doc
-		this.doc.integrate (this);
+		if (this.doc != null)
+		this.doc.integrate (this, false);
 	}
 	
 	
@@ -758,8 +735,9 @@ public class DocumentNode
 	 */
 	protected void reSetupStructureUp ()
 	{
+		TreeDocument treeDoc = this.doc;
 		if (this.doc != null)
-			this.doc.separate (this);
+			this.doc.separate (this, false);
 		
 		calcHash ();
 		numLeaves = 0;
@@ -782,8 +760,8 @@ public class DocumentNode
 		if (numLeaves == 0)
 			numLeaves = 1;
 		
-		if (this.doc != null)
-			this.doc.integrate (this);
+		if (treeDoc != null)
+			treeDoc.integrate (this, false);
 		weight = weighter.getWeight (this);
 		if (parent != null)
 			parent.reSetupStructureUp ();
