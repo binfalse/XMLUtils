@@ -26,13 +26,13 @@ public class TextNode
 {
 	
 	/** The text stored in this node. */
-	private String				text;
+	private String		text;
 	
 	/** The weight. */
-	private double				weight;
+	private double		weight;
 	
 	/** The weighter. */
-	private Weighter			weighter;
+	private Weighter	weighter;
 	
 	
 	/**
@@ -99,6 +99,20 @@ public class TextNode
 	public String getText ()
 	{
 		return text;
+	}
+	
+	
+	/**
+	 * Sets the text content of this node.
+	 * <strong>Be Careful:</strong> since we have to recalculate all hashes this
+	 * operation is very expensive!
+	 * 
+	 * @return the text
+	 */
+	public void setText (String newText)
+	{
+		this.text = newText;
+		reSetupStructureUp ();
 	}
 	
 	
@@ -198,9 +212,13 @@ public class TextNode
 	@Override
 	protected void reSetupStructureUp ()
 	{
-		this.doc.separate (this, false);
+		TreeDocument treeDoc = this.doc;
+		if (this.doc != null)
+			this.doc.separate (this, false);
 		ownHash = GeneralTools.hash (text);
-		this.doc.integrate (this, false);
+
+		if (treeDoc != null)
+			treeDoc.integrate (this, false);
 		
 		weight = weighter.getWeight (this);
 		

@@ -3,6 +3,7 @@
  */
 package de.unirostock.sems.xmlutils.tools;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -38,9 +39,14 @@ import de.binfalse.bfutils.SimpleOutputStream;
  */
 public class XmlTools
 {
+	/**
+	 * no need to recreate the builder everytime...
+	 */
+	private static DocumentBuilder builder;
+	
 	
 	/**
-	 * Reads an XML document.
+	 * Reads an XML document from File.
 	 * 
 	 * @param file
 	 *          the document to read
@@ -60,10 +66,35 @@ public class XmlTools
 			SAXException,
 			IOException
 	{
-		DocumentBuilder builder = DocumentBuilderFactory.newInstance ()
-			.newDocumentBuilder ();
+		if (builder == null)
+			builder = DocumentBuilderFactory.newInstance ().newDocumentBuilder ();
 		
 		return builder.parse (new FileInputStream (file));
+	}
+	
+	
+	/**
+	 * Read an XML document from String.
+	 * 
+	 * @param doc
+	 *          the string containing the XML document
+	 * @return the document
+	 * @throws ParserConfigurationException
+	 *           the parser configuration exception
+	 * @throws SAXException
+	 *           the sAX exception
+	 * @throws IOException
+	 *           Signals that an I/O exception has occurred.
+	 */
+	public static Document readDocument (String doc)
+		throws ParserConfigurationException,
+			SAXException,
+			IOException
+	{
+		if (builder == null)
+			builder = DocumentBuilderFactory.newInstance ().newDocumentBuilder ();
+		
+		return builder.parse (new ByteArrayInputStream (doc.getBytes ()));
 	}
 	
 	

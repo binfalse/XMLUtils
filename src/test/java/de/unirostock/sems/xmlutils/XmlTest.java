@@ -91,6 +91,49 @@ public class XmlTest
 		LOGGER.setLevel (LOGGER.DEBUG);
 	}
 	
+	@Test
+	public void testDocReadWrite ()
+	{
+		String prettyDocument = DocumentTools.printPrettySubDoc (simpleFile.getRoot ());
+		try
+		{
+			TreeDocument test = new TreeDocument (XmlTools.readDocument (prettyDocument), null);
+			assertTrue (test.equals (simpleFile));
+			String uglyDocument = DocumentTools.printSubDoc (test.getRoot ());
+			assertFalse ("ubly and pretty export should result in different output", prettyDocument.equals (uglyDocument));
+			test = new TreeDocument (XmlTools.readDocument (uglyDocument), null);
+			assertTrue (test.equals (simpleFile));
+			
+		}
+		catch (Exception e)
+		{
+			fail ("unexpected error reading exported document" + e);
+		}
+	}
+
+	@Test
+	public void testDocEquals ()
+	{
+		// lets test whether equals is correct
+		String document = DocumentTools.printSubDoc (simpleFile.getRoot ());
+		try
+		{
+			TreeDocument test = new TreeDocument (XmlTools.readDocument (document), null);
+			assertTrue (test.equals (simpleFile));
+			
+			TreeNode tn = test.getNodeByPath ("/conversations[1]/message[1]/from[1]/text()[1]");
+			assertNotNull ("node with path '/conversations[1]/message[1]/from[1]/text()[1]' is suppossed to be non-null", tn);
+			TextNode text = (TextNode) tn;
+			text.setText ("Ron");
+			
+			assertFalse (test.equals (simpleFile));
+		}
+		catch (Exception e)
+		{
+			fail ("unexpected error reading exported document" + e);
+		}
+	}
+	
 	
 	@Test
 	public void testNodeDistances ()

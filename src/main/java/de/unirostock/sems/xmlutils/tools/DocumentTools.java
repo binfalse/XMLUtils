@@ -27,6 +27,10 @@ import de.unirostock.sems.xmlutils.ds.TreeDocument;
  */
 public class DocumentTools
 {
+	/**
+	 * no need to recreate the builder everytime...
+	 */
+	private static DocumentBuilder builder;
 	
 	/** The transformer to convert content mathml to presentation mathml. */
 	private static Transformer	mathTransformer;
@@ -56,10 +60,10 @@ public class DocumentTools
 	{
 		try
 		{
-			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance ();
-			DocumentBuilder docBuilder = docFactory.newDocumentBuilder ();
+			if (builder == null)
+				builder = DocumentBuilderFactory.newInstance ().newDocumentBuilder ();
 			
-			Document d = docBuilder.newDocument ();
+			Document d = builder.newDocument ();
 			node.getSubDoc (d, null);
 			return d;
 		}
@@ -82,10 +86,10 @@ public class DocumentTools
 	{
 		try
 		{
-			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance ();
-			DocumentBuilder docBuilder = docFactory.newDocumentBuilder ();
+			if (builder == null)
+				builder = DocumentBuilderFactory.newInstance ().newDocumentBuilder ();
 			
-			Document d = docBuilder.newDocument ();
+			Document d = builder.newDocument ();
 			node.getSubDoc (d, null);
 			return XmlTools.printDocument (d);
 		}
@@ -108,10 +112,10 @@ public class DocumentTools
 	{
 		try
 		{
-			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance ();
-			DocumentBuilder docBuilder = docFactory.newDocumentBuilder ();
+			if (builder == null)
+				builder = DocumentBuilderFactory.newInstance ().newDocumentBuilder ();
 			
-			Document d = docBuilder.newDocument ();
+			Document d = builder.newDocument ();
 			node.getSubDoc (d, null);
 			return XmlTools.prettyPrintDocument (d, new SimpleOutputStream ())
 				.toString ();
