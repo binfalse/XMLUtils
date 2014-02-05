@@ -3,7 +3,7 @@
  */
 package de.unirostock.sems.xmlutils.alg;
 
-import java.util.Vector;
+import java.util.List;
 
 import de.unirostock.sems.xmlutils.ds.DocumentNode;
 import de.unirostock.sems.xmlutils.ds.TextNode;
@@ -33,7 +33,7 @@ public class XyWeighter
 	{
 		// from Cobena2002
 		double weight = 1;
-		Vector<TreeNode> kids = node.getChildren ();
+		List<TreeNode> kids = node.getChildren ();
 		for (TreeNode kid : kids)
 			weight += kid.getWeight ();
 		return weight;

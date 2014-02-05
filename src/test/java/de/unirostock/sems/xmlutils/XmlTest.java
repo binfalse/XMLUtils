@@ -12,11 +12,11 @@ import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.security.SecureRandom;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
-import java.util.Vector;
 
 import javax.xml.transform.TransformerException;
 
@@ -137,7 +137,7 @@ public class XmlTest
 	{
 		Random rand = new SecureRandom ();
 		
-		Vector<NodeDistance> distances = new Vector<NodeDistance> ();
+		List<NodeDistance> distances = new ArrayList<NodeDistance> ();
 		for (int i = 0; i < 10; i++)
 			distances.add (new NodeDistance (null, null, rand.nextDouble ()));
 		
@@ -145,8 +145,8 @@ public class XmlTest
 		Collections.sort (distances, new NodeDistanceComparator ());
 		for (int i = 1; i < distances.size (); i++)
 		{
-			double prev = distances.elementAt (i - 1).distance;
-			double cur = distances.elementAt (i).distance;
+			double prev = distances.get (i - 1).distance;
+			double cur = distances.get (i).distance;
 			assertTrue ("getSubtreesBySize isn't sorted ascending: " + prev + ">"
 				+ cur, cur >= prev);
 		}
@@ -155,8 +155,8 @@ public class XmlTest
 		Collections.sort (distances, new NodeDistanceComparator (true));
 		for (int i = 1; i < distances.size (); i++)
 		{
-			double prev = distances.elementAt (i - 1).distance;
-			double cur = distances.elementAt (i).distance;
+			double prev = distances.get (i - 1).distance;
+			double cur = distances.get (i).distance;
 			assertTrue ("getSubtreesBySize isn't sorted ascending: " + prev + ">"
 				+ cur, cur <= prev);
 		}
@@ -300,7 +300,7 @@ public class XmlTest
 				}
 				
 				// make sure sum children weight is less than our weight
-				Vector<TreeNode> kids = node.getChildren ();
+				List<TreeNode> kids = node.getChildren ();
 				double kWeight = 0;
 				int kSize = 0;
 				for (TreeNode kid : kids)
@@ -349,16 +349,16 @@ public class XmlTest
 		assertEquals ("there should be exactly one content", 1, initialMessage
 			.getChildrenWithTag ("content").size ());
 		DocumentNode content = (DocumentNode) initialMessage.getChildrenWithTag (
-			"content").elementAt (0);
+			"content").get (0);
 		
 		assertEquals ("initial message is wrong", "keep workin'!",
-			((TextNode) content.getChildren ().elementAt (0)).getText ());
+			((TextNode) content.getChildren ().get (0)).getText ());
 		
 		// check lvls
 		assertEquals ("content should be level 2", 2, content.getLevel ());
 		assertEquals ("root should be level 0", 0, root.getLevel ());
 		assertEquals ("initial message should be lvl 3", 3, ((TextNode) content
-			.getChildren ().elementAt (0)).getLevel ());
+			.getChildren ().get (0)).getLevel ());
 	}
 	
 	@Test
@@ -399,10 +399,10 @@ public class XmlTest
 		assertEquals ("nodes should have exactly one child", 1, difrom.getNumChildren ());
 		assertEquals ("nodes should have exactly one child", 1, drfrom.getNumChildren ());
 		// check text nodes
-		assertFalse ("content of the text nodes w/ same text shouldn't differ", dito.getChildren ().elementAt (0).contentDiffers (drfrom.getChildren ().elementAt (0)));
-		assertTrue ("content of the text nodes w/ different text should differ", difrom.getChildren ().elementAt (0).contentDiffers (drfrom.getChildren ().elementAt (0)));
+		assertFalse ("content of the text nodes w/ same text shouldn't differ", dito.getChildren ().get (0).contentDiffers (drfrom.getChildren ().get (0)));
+		assertTrue ("content of the text nodes w/ different text should differ", difrom.getChildren ().get (0).contentDiffers (drfrom.getChildren ().get (0)));
 		// check different node types
-		assertTrue ("content of the different node types should differ", dito.getChildren ().elementAt (0).contentDiffers (drfrom));
+		assertTrue ("content of the different node types should differ", dito.getChildren ().get (0).contentDiffers (drfrom));
 		// check weights
 		assertEquals ("weights of the similar subtrees (only different tag names) should be equal", ito.getWeight (), rfrom.getWeight (), EPSILON);
 		assertEquals ("weights of the similar subtrees (only different texts, but same length) should be equal", ifrom.getWeight (), rfrom.getWeight (), EPSILON);

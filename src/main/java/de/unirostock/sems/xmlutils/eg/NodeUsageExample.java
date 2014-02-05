@@ -6,7 +6,7 @@ package de.unirostock.sems.xmlutils.eg;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Vector;
+import java.util.List;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -51,7 +51,7 @@ public class NodeUsageExample
 		
 		// get root node
 		DocumentNode root = document.getRoot ();
-		Vector<TreeNode> firstLevel = root.getChildren ();
+		List<TreeNode> firstLevel = root.getChildren ();
 		System.out.println ("There are " + firstLevel.size () + " children in "
 			+ root.getXPath () + " :");
 		for (TreeNode kid : firstLevel)

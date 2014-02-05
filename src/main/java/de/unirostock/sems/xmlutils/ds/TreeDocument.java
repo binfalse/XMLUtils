@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
-import java.util.Vector;
 
 import org.w3c.dom.Document;
 
@@ -213,7 +212,7 @@ public class TreeDocument
 			if (recursively)
 			{
 				// integrate all children
-				Vector<TreeNode> kids = dnode.getChildren ();
+				List<TreeNode> kids = dnode.getChildren ();
 				for (TreeNode tn : kids)
 					integrate (tn, recursively);
 			}
@@ -248,7 +247,7 @@ public class TreeDocument
 			if (recursively)
 			{
 				// separate all children
-				Vector<TreeNode> kids = dnode.getChildren ();
+				List<TreeNode> kids = dnode.getChildren ();
 				for (TreeNode tn : kids)
 					separate (tn, recursively);
 			}
@@ -346,7 +345,7 @@ public class TreeDocument
 	{
 		List<DocumentNode> nodes = tagMapper.getNodes (tag);
 		if (nodes == null)
-			return new Vector<DocumentNode> ();
+			return new ArrayList<DocumentNode> ();
 		return tagMapper.getNodes (tag);
 	}
 	

@@ -4,7 +4,7 @@
 package de.unirostock.sems.xmlutils.ds;
 
 import java.util.HashMap;
-import java.util.Vector;
+import java.util.List;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -239,7 +239,7 @@ public abstract class TreeNode
 		this.modified = UNCHANGED;
 		if (type == DOC_NODE)
 		{
-			Vector<TreeNode> kids = ((DocumentNode) this).getChildren ();
+			List<TreeNode> kids = ((DocumentNode) this).getChildren ();
 			for (TreeNode kid : kids)
 				kid.resetModifications ();
 		}

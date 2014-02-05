@@ -3,9 +3,10 @@
  */
 package de.unirostock.sems.xmlutils.ds;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Set;
-import java.util.Vector;
 
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
@@ -46,10 +47,10 @@ public class DocumentNode
 	private HashMap<String, String>						attributes;
 	
 	/** The children of this node. */
-	private Vector<TreeNode>									children;
+	private List<TreeNode>									children;
 	
 	/** The children mapped by tag names. */
-	private HashMap<String, Vector<TreeNode>>	childrenByTag;
+	private HashMap<String, List<TreeNode>>	childrenByTag;
 	
 	/** The hash of the subtree rooted in this node. */
 	private String														subTreeHash;
@@ -103,8 +104,8 @@ public class DocumentNode
 		for (String attr : toCopy.attributes.keySet ())
 			attributes.put (attr, toCopy.attributes.get (attr));
 		
-		children = new Vector<TreeNode> ();
-		childrenByTag = new HashMap<String, Vector<TreeNode>> ();
+		children = new ArrayList<TreeNode> ();
+		childrenByTag = new HashMap<String, List<TreeNode>> ();
 		
 		for (TreeNode tn : toCopy.getChildren ())
 		{
@@ -113,7 +114,7 @@ public class DocumentNode
 				DocumentNode c = (DocumentNode) tn;
 
 				if (childrenByTag.get (c.tagName) == null)
-					childrenByTag.put (c.tagName, new Vector<TreeNode> ());
+					childrenByTag.put (c.tagName, new ArrayList<TreeNode> ());
 				
 				DocumentNode cc = new DocumentNode (c, this, childrenByTag
 					.get (c.tagName).size () + 1);
@@ -125,7 +126,7 @@ public class DocumentNode
 			else
 			{
 				if (childrenByTag.get (TEXT_TAG) == null)
-					childrenByTag.put (TEXT_TAG, new Vector<TreeNode> ());
+					childrenByTag.put (TEXT_TAG, new ArrayList<TreeNode> ());
 				
 				TextNode c = (TextNode) tn;
 				TextNode cc = new TextNode (c, this, childrenByTag
@@ -167,7 +168,7 @@ public class DocumentNode
 		super (TreeNode.DOC_NODE, parent, doc, level);
 		// init objects
 		attributes = new HashMap<String, String> ();
-		children = new Vector<TreeNode> ();
+		children = new ArrayList<TreeNode> ();
 		tagName = element.getTagName ();
 		sizeSubtree = numLeaves = 0;
 		weighter = w;
@@ -194,7 +195,7 @@ public class DocumentNode
 		// add kids
 		NodeList kids = element.getChildNodes ();
 		int numKids = kids.getLength ();
-		childrenByTag = new HashMap<String, Vector<TreeNode>> ();
+		childrenByTag = new HashMap<String, List<TreeNode>> ();
 		for (int i = 0; i < numKids; i++)
 		{
 			Node current = kids.item (i);
@@ -203,7 +204,7 @@ public class DocumentNode
 			{
 				Element cur = (Element) current;
 				if (childrenByTag.get (cur.getTagName ()) == null)
-					childrenByTag.put (cur.getTagName (), new Vector<TreeNode> ());
+					childrenByTag.put (cur.getTagName (), new ArrayList<TreeNode> ());
 				DocumentNode kid = new DocumentNode (cur, this, doc, w, childrenByTag
 					.get (cur.getTagName ()).size () + 1, level + 1);
 				
@@ -222,7 +223,7 @@ public class DocumentNode
 					continue;
 				
 				if (childrenByTag.get (TEXT_TAG) == null)
-					childrenByTag.put (TEXT_TAG, new Vector<TreeNode> ());
+					childrenByTag.put (TEXT_TAG, new ArrayList<TreeNode> ());
 				
 				TextNode kid = new TextNode (text, this, doc, childrenByTag.get (
 					TEXT_TAG).size () + 1, w, level + 1);
@@ -346,7 +347,7 @@ public class DocumentNode
 		// integrate subtree
 		toAdd.parent = this;
 		if (childrenByTag.get (toAdd.getTagName ()) == null)
-			childrenByTag.put (toAdd.getTagName (), new Vector<TreeNode> ());
+			childrenByTag.put (toAdd.getTagName (), new ArrayList<TreeNode> ());
 		children.add (toAdd);
 		// propagate downwards
 		doc.integrate (toAdd, true);
@@ -373,7 +374,7 @@ public class DocumentNode
 	public void rmChild (DocumentNode toRemove)
 		throws XmlDocumentConsistencyException
 	{
-		Vector<TreeNode> nodes = childrenByTag.get (toRemove.getTagName ());
+		List<TreeNode> nodes = childrenByTag.get (toRemove.getTagName ());
 		if (nodes == null)
 			return;
 		
@@ -496,7 +497,7 @@ public class DocumentNode
 	 * 
 	 * @return the children
 	 */
-	public Vector<TreeNode> getChildren ()
+	public List<TreeNode> getChildren ()
 	{
 		return children;
 	}
@@ -507,14 +508,14 @@ public class DocumentNode
 	 * 
 	 * @param tag
 	 *          the tag
-	 * @return the children having tag as tag name or an empty vector if there are
+	 * @return the children having tag as tag name or an empty list if there are
 	 *         no such children
 	 */
-	public Vector<TreeNode> getChildrenWithTag (String tag)
+	public List<TreeNode> getChildrenWithTag (String tag)
 	{
-		Vector<TreeNode> ret = childrenByTag.get (tag);
+		List<TreeNode> ret = childrenByTag.get (tag);
 		if (ret == null)
-			return new Vector<TreeNode> ();
+			return new ArrayList<TreeNode> ();
 		return ret;
 	}
 	
@@ -524,7 +525,7 @@ public class DocumentNode
 	 * 
 	 * @return the children tag map
 	 */
-	public HashMap<String, Vector<TreeNode>> getChildrenTagMap ()
+	public HashMap<String, List<TreeNode>> getChildrenTagMap ()
 	{
 		return childrenByTag;
 	}
@@ -727,9 +728,9 @@ public class DocumentNode
 		// propagate downwards
 		for (String tag : childrenByTag.keySet ())
 		{
-			Vector<TreeNode> kids = childrenByTag.get (tag);
+			List<TreeNode> kids = childrenByTag.get (tag);
 			for (int i = 0; i < kids.size (); i++)
-				kids.elementAt (i).reSetupStructureDown (doc, i + 1);
+				kids.get (i).reSetupStructureDown (doc, i + 1);
 		}
 		
 		// integrate into (new) doc
@@ -791,7 +792,7 @@ public class DocumentNode
 		attr = new StringBuilder ("<" + tagName + attr.toString () + ">\t" + weight
 			+ "\t(" + xPath + ")\t" + subTreeHash + "\n");
 		for (int i = 0; i < children.size (); i++)
-			attr.append (children.elementAt (i));
+			attr.append (children.get (i));
 		return attr.toString () + "</" + tagName + ">\n";
 	}
 	
