@@ -41,12 +41,18 @@ public class TextNode
 	 * @param toCopy
 	 *          the node to copy
 	 */
-	public TextNode (TextNode toCopy)
+	public TextNode (TextNode toCopy, DocumentNode parent, int numChild)
 	{
-		super (TreeNode.TEXT_NODE, null, null, 0);
+		super (TreeNode.TEXT_NODE, parent, null, parent == null ? 0 : parent.level + 1);
 		this.text = toCopy.text;
+		
 		// create xpath
-		xPath = null;
+		if (parent == null)
+			xPath = "";
+		else
+			xPath = parent.getXPath ();
+		xPath += "/" + TEXT_TAG + "[" + numChild + "]";
+		
 		ownHash = toCopy.ownHash;
 		weight = toCopy.weight;
 		weighter = toCopy.weighter;

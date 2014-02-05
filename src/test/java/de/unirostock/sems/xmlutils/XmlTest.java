@@ -6,6 +6,7 @@ package de.unirostock.sems.xmlutils;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -55,7 +56,6 @@ public class XmlTest
 	@BeforeClass
 	public static void readFiles ()
 	{
-		LOGGER.debug ("preread");
 		if (SIMPLE_DOC.canRead ())
 		{
 			try
@@ -71,7 +71,6 @@ public class XmlTest
 		{
 			LOGGER.error ("cannot read " + SIMPLE_DOC + " -> skipping tests");
 		}
-		LOGGER.debug ("now math");
 		if (MATHML_DOC.canRead ())
 		{
 			try
@@ -87,8 +86,6 @@ public class XmlTest
 		{
 			LOGGER.error ("cannot read " + MATHML_DOC + " -> skipping tests");
 		}
-		LOGGER.debug ("postread");
-		LOGGER.setLevel (LOGGER.DEBUG);
 	}
 	
 	@Test
@@ -432,6 +429,50 @@ public class XmlTest
 	}
 	
 	@Test
+	public void testExtract ()
+	{
+		// need another file just to destroy it
+		TreeDocument simpleFile2 = null;
+		if (SIMPLE_DOC.canRead ())
+		{
+			try
+			{
+				simpleFile2 = new TreeDocument (XmlTools.readDocument (SIMPLE_DOC), SIMPLE_DOC.toURI ());
+			}
+			catch (Exception e)
+			{
+				fail ("cannot read " + SIMPLE_DOC + " -> skipping tests" + e);
+			}
+		}
+		else
+		{
+			fail ("cannot read " + SIMPLE_DOC + " -> skipping tests");
+		}
+
+		String xPath = "/conversations[1]/to[1]";
+		
+		int prevXPaths = simpleFile2.getOccurringXPaths ().size ();
+		int prevNumNodes = simpleFile2.getNumNodes ();
+		double prevWeight = simpleFile2.getTreeWeight ();
+		assertNull ("whoops? where does this node come from? " + xPath, simpleFile2.getNodeByPath (xPath));
+		
+		// first <to> node
+		DocumentNode to = simpleFile2.getNodesByTag ("to").get (0);
+		DocumentNode toCopy = to.extract ();
+		assertEquals ("expected to extract a subtree of size 2", 2, 1 + toCopy.getSizeSubtree ());
+		
+		// append it to document
+		simpleFile2.getRoot ().addChild (toCopy);
+		
+		//System.out.println (DocumentTools.printPrettySubDoc (simpleFile2.getRoot ()));
+		assertTrue ("expected more xpaths after adding a subtree", prevXPaths < simpleFile2.getOccurringXPaths ().size ());
+		assertTrue ("expected more nodes after adding a subtree", prevNumNodes < simpleFile2.getNumNodes ());
+		assertTrue ("expected a larger weight after adding a subtree", prevWeight < simpleFile2.getTreeWeight ());
+		assertNotNull ("expected to find a node in " + xPath, simpleFile2.getNodeByPath (xPath));
+		
+	}
+	
+	@Test
 	public void testRemoveAndInsert ()
 	{
 		if (simpleFile == null)
@@ -483,6 +524,8 @@ public class XmlTest
 		
 		assertTrue ("uniqueIds has changed after remove + insert", uniqueIds == simpleFile.uniqueIds ());
 		
+		// check children map in root
+		assertTrue ("children tag map in root is apparently broken", root.getChildrenWithTag (extract.getTagName ()).get (1) == extract);
 	}
 	
 	

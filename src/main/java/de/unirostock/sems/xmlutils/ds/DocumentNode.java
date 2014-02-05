@@ -76,10 +76,10 @@ public class DocumentNode
 	 * @param toCopy
 	 *          the node to copy
 	 */
-	private DocumentNode (DocumentNode toCopy)
+	private DocumentNode (DocumentNode toCopy, DocumentNode parent, int numChild)
 	{
 		// init the tree node
-		super (TreeNode.DOC_NODE, null, null, 0);
+		super (TreeNode.DOC_NODE, parent, null, parent == null ? 0 : parent.level + 1);
 		
 		tagName = toCopy.tagName;
 		id = toCopy.id;
@@ -87,6 +87,13 @@ public class DocumentNode
 		numLeaves = toCopy.numLeaves;
 		weight = toCopy.weight;
 		weighter = toCopy.weighter;
+		
+		// compute xpath
+		if (parent == null)
+			xPath = "";
+		else
+			xPath = parent.getXPath ();
+		xPath += "/" + tagName + "[" + numChild + "]";
 		
 		attributes = new HashMap<String, String> ();
 		for (String attr : toCopy.attributes.keySet ())
@@ -100,30 +107,29 @@ public class DocumentNode
 			if (tn.getType () == TreeNode.DOC_NODE)
 			{
 				DocumentNode c = (DocumentNode) tn;
-				DocumentNode cc = new DocumentNode (c);
+
+				if (childrenByTag.get (c.tagName) == null)
+					childrenByTag.put (c.tagName, new Vector<TreeNode> ());
+				
+				DocumentNode cc = new DocumentNode (c, this, childrenByTag
+					.get (c.tagName).size () + 1);
+				
 				children.add (cc);
 				cc.parent = this;
-				Vector<TreeNode> v = childrenByTag.get (cc.tagName);
-				if (v == null)
-				{
-					v = new Vector<TreeNode> ();
-					childrenByTag.put (cc.tagName, v);
-				}
-				v.add (cc);
+				childrenByTag.get (cc.tagName).add (cc);
 			}
 			else
 			{
+				if (childrenByTag.get (TEXT_TAG) == null)
+					childrenByTag.put (TEXT_TAG, new Vector<TreeNode> ());
+				
 				TextNode c = (TextNode) tn;
-				TextNode cc = new TextNode (c);
+				TextNode cc = new TextNode (c, this, childrenByTag
+					.get (TEXT_TAG).size () + 1);
 				children.add (cc);
 				cc.parent = this;
-				Vector<TreeNode> v = childrenByTag.get (TEXT_TAG);
-				if (v == null)
-				{
-					v = new Vector<TreeNode> ();
-					childrenByTag.put (TEXT_TAG, v);
-				}
-				v.add (cc);
+				
+				childrenByTag.get (TEXT_TAG).add (cc);
 			}
 		}
 		
@@ -232,14 +238,15 @@ public class DocumentNode
 	
 	
 	/**
-	 * Extracts this subtree. Creates a DocumentNode that has no parent, e.g. to
+	 * Extracts this subtree. Creates a copy of the subtree rooted in this node
+	 * and returns a DocumentNode that has no parent, e.g. to
 	 * transfer it to another document.
 	 * 
 	 * @return the copy of this DocumentNode
 	 */
 	public DocumentNode extract ()
 	{
-		return new DocumentNode (this);
+		return new DocumentNode (this, null, 1);
 	}
 	
 	
@@ -371,10 +378,9 @@ public class DocumentNode
 			return;
 		else if (!children.remove (toRemove))
 		{
-			LOGGER
-				.error ("we produced an inconsistent state. we removed a node"
-					+ " from tag-mapped children, but weren't able to find it in"
-					+ " children!?");
+			LOGGER.error ("we produced an inconsistent state. we removed a node"
+				+ " from tag-mapped children, but weren't able to find it in"
+				+ " children!?");
 			throw new XmlDocumentConsistencyException ("inconsistens state."
 				+ " there was a node in tag-mapped children, but not in children!?");
 		}
@@ -724,7 +730,7 @@ public class DocumentNode
 		
 		// integrate into (new) doc
 		if (this.doc != null)
-		this.doc.integrate (this, false);
+			this.doc.integrate (this, false);
 	}
 	
 	
