@@ -1,5 +1,5 @@
 <conversations>
-    <message id="messageone">
+    <message id="messageone" priority="high">
         <from>dagmar</from>
         <to>martin</to>
         <content>keep workin'!</content>
