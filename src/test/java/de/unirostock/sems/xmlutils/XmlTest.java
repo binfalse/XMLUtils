@@ -60,7 +60,7 @@ public class XmlTest
 		{
 			try
 			{
-				simpleFile = new TreeDocument (XmlTools.readDocument (SIMPLE_DOC), null);
+				simpleFile = new TreeDocument (XmlTools.readDocument (SIMPLE_DOC), SIMPLE_DOC.toURI ());
 			}
 			catch (Exception e)
 			{
@@ -76,7 +76,7 @@ public class XmlTest
 		{
 			try
 			{
-				mathmlFile = new TreeDocument (XmlTools.readDocument (MATHML_DOC), null);
+				mathmlFile = new TreeDocument (XmlTools.readDocument (MATHML_DOC), MATHML_DOC.toURI ());
 			}
 			catch (Exception e)
 			{

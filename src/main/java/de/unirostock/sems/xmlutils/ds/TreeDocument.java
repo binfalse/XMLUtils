@@ -414,7 +414,7 @@ public class TreeDocument
 	
 	
 	/**
-	 * Gets the occurring XPaths.
+	 * Get all known XPaths.
 	 * 
 	 * @return the occurring XPaths
 	 */
@@ -425,7 +425,7 @@ public class TreeDocument
 	
 	
 	/**
-	 * Gets the occurring identifiers.
+	 * Get all known identifiers.
 	 * 
 	 * @return the occurring identifiers
 	 */
@@ -438,7 +438,7 @@ public class TreeDocument
 	
 	
 	/**
-	 * Gets the occurring tag names.
+	 * Get all known tag names.
 	 * 
 	 * @return the occurring tags
 	 */
@@ -449,7 +449,7 @@ public class TreeDocument
 	
 	
 	/**
-	 * Gets the occurring hashes.
+	 * Get all known hashes.
 	 * 
 	 * @return the occurring hashes
 	 */
