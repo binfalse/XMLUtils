@@ -408,7 +408,6 @@ public abstract class TreeNode
 	 * 
 	 * @param map
 	 *          the map to write our statistics to
-	 * @return the node statistics
 	 */
 	public abstract void getNodeStats (HashMap<String, Integer> map);
 }

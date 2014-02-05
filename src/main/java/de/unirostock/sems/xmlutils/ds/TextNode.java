@@ -40,6 +40,10 @@ public class TextNode
 	 * 
 	 * @param toCopy
 	 *          the node to copy
+	 * @param parent
+	 *          the new parent or null if this is going to be root
+	 * @param numChild
+	 *          the number of that child among its siblings
 	 */
 	public TextNode (TextNode toCopy, DocumentNode parent, int numChild)
 	{
@@ -112,8 +116,6 @@ public class TextNode
 	 * Sets the text content of this node.
 	 * <strong>Be Careful:</strong> since we have to recalculate all hashes this
 	 * operation is very expensive!
-	 * 
-	 * @return the text
 	 */
 	public void setText (String newText)
 	{

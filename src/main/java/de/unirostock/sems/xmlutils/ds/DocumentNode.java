@@ -75,6 +75,10 @@ public class DocumentNode
 	 * 
 	 * @param toCopy
 	 *          the node to copy
+	 * @param parent
+	 *          the new parent or null if this is going to be root
+	 * @param numChild
+	 *          the number of that child among its siblings
 	 */
 	private DocumentNode (DocumentNode toCopy, DocumentNode parent, int numChild)
 	{
