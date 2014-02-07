@@ -6,7 +6,9 @@ package de.unirostock.sems.xmlutils.ds;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
@@ -44,7 +46,7 @@ public class DocumentNode
 	private String														id;
 	
 	/** The attributes. */
-	private HashMap<String, String>						attributes;
+	private Map<String, String>							attributes;
 	
 	/** The children of this node. */
 	private List<TreeNode>									children;
@@ -79,7 +81,7 @@ public class DocumentNode
 	 * @param parent
 	 *          the new parent or null if this is going to be root
 	 * @param numChild
-	 *          the number of that child among its siblings
+	 *          the number of that child among its siblings (first child = 1)
 	 */
 	private DocumentNode (DocumentNode toCopy, DocumentNode parent, int numChild)
 	{
@@ -100,7 +102,7 @@ public class DocumentNode
 			xPath = parent.getXPath ();
 		xPath += "/" + tagName + "[" + numChild + "]";
 		
-		attributes = new HashMap<String, String> ();
+		attributes = new TreeMap<String, String> ();
 		for (String attr : toCopy.attributes.keySet ())
 			attributes.put (attr, toCopy.attributes.get (attr));
 		
@@ -167,7 +169,7 @@ public class DocumentNode
 		// init the tree node
 		super (TreeNode.DOC_NODE, parent, doc, level);
 		// init objects
-		attributes = new HashMap<String, String> ();
+		attributes = new TreeMap<String, String> ();
 		children = new ArrayList<TreeNode> ();
 		tagName = element.getTagName ();
 		sizeSubtree = numLeaves = 0;

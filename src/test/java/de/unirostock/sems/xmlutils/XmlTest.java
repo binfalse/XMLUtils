@@ -265,7 +265,7 @@ public class XmlTest
 		for (TextNode tn : textNodes)
 		{
 			foundNodes++;
-			checkLvl (tn);
+			testNodeStuff (tn);
 			// System.out.println (tn.getText () + " => " + tn.getWeight ());
 		}
 		
@@ -281,7 +281,7 @@ public class XmlTest
 			// check that weights are valid
 			for (DocumentNode node : dn)
 			{
-				checkLvl (node);
+				testNodeStuff (node);
 				double weight = node.getWeight ();
 				int size = node.getSizeSubtree ();
 				if (node.getParent () == null)
@@ -336,6 +336,7 @@ public class XmlTest
 		DocumentNode root = simpleFile.getRoot ();
 		
 		DocumentNode reply = simpleFile.getNodeById ("messagetwo");
+		testNodeStuff (reply);
 		assertNotNull ("reply shouldn't be null", reply);
 		assertNotNull ("replies attribute shouldn't be null",
 			reply.getAttribute ("replies"));
@@ -344,6 +345,7 @@ public class XmlTest
 		
 		DocumentNode initialMessage = simpleFile.getNodeById (reply
 			.getAttribute ("replies"));
+		testNodeStuff (initialMessage);
 		assertNotNull ("content of initial message shouldn't be null",
 			initialMessage.getChildrenWithTag ("content"));
 		assertEquals ("there should be exactly one content", 1, initialMessage
@@ -426,6 +428,35 @@ public class XmlTest
 			assertNotNull ("stats key " + s + " in 0 shouldn't be null", stats0.get (s));
 			assertEquals ("stats key " + s + " in 1 should equal 0", stats1.get (s), stats0.get (s));
 		}
+		
+		// test node hashes
+		DocumentNode dummy1 = dito.extract ();
+		DocumentNode dummy2 = dito.extract ();
+		// make sure both are the same so far
+		assertTrue ("hashes of original and copy differs", dummy1.getSubTreeHash ().equals (dito.getSubTreeHash ()));
+		assertTrue ("hashes of identical copies differs", dummy1.getSubTreeHash ().equals (dummy2.getSubTreeHash ()));
+		// modify node1
+		dummy1.setAttribute ("smells", "abc");
+		dummy1.setAttribute ("like", "abc");
+		dummy1.setAttribute ("garlic", "abc");
+		dummy1.setAttribute ("attribute", "abc");
+		dummy1.setAttribute ("node", "abc");
+		dummy1.setAttribute ("z", "abc");
+		dummy1.setAttribute ("whatever", "");
+		// make sure they now differ
+		assertFalse ("hashes of original and modified copy should differ", dummy1.getSubTreeHash ().equals (dito.getSubTreeHash ()));
+		assertFalse ("hashes of copies should differs", dummy1.getSubTreeHash ().equals (dummy2.getSubTreeHash ()));
+		// modify node2
+		dummy2.setAttribute ("z", "abc");
+		dummy2.setAttribute ("node", "abc");
+		dummy2.setAttribute ("smells", "abc");
+		dummy2.setAttribute ("like", "abc");
+		dummy2.setAttribute ("garlic", "abc");
+		dummy2.setAttribute ("whatever", "");
+		dummy2.setAttribute ("attribute", "abc");
+		assertFalse ("hashes of original and modified copy should differ", dummy1.getSubTreeHash ().equals (dito.getSubTreeHash ()));
+		assertTrue ("hashes of identical copies differs", dummy1.getSubTreeHash ().equals (dummy2.getSubTreeHash ()));
+		
 	}
 	
 	@Test
@@ -528,15 +559,36 @@ public class XmlTest
 		assertTrue ("children tag map in root is apparently broken", root.getChildrenWithTag (extract.getTagName ()).get (1) == extract);
 	}
 	
-	
-	public void checkLvl (TreeNode node)
+	public void testNodeStuff (TextNode node)
 	{
+		// test lvl
 		int lvl = node.getLevel ();
 		
 		assertTrue ("lvl must not be negativ", lvl >= 0);
 		assertTrue ("only root has lvl 0", lvl == 0 ? node.getParent () == null
 			: node.getParent () != null);
 		if (node.getParent () != null)
-			checkLvl (node.getParent ());
+			testNodeStuff (node.getParent ());
+	}
+	
+	public void testNodeStuff (DocumentNode node)
+	{
+		// make sure attributes are in correct order
+		String prev = null;
+		for (String attr : node.getAttributes ())
+		{
+			if (prev != null)
+				assertTrue ("attributes aren't sorted", prev.compareTo (attr) < 0);
+			prev = attr;
+		}
+
+		// test lvl
+		int lvl = node.getLevel ();
+		
+		assertTrue ("lvl must not be negativ", lvl >= 0);
+		assertTrue ("only root has lvl 0", lvl == 0 ? node.getParent () == null
+			: node.getParent () != null);
+		if (node.getParent () != null)
+			testNodeStuff (node.getParent ());
 	}
 }
