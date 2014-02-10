@@ -64,12 +64,12 @@ public class XmlTest
 			}
 			catch (Exception e)
 			{
-				LOGGER.error ("cannot read " + SIMPLE_DOC + " -> skipping tests", e);
+				LOGGER.error (e, "cannot read ", SIMPLE_DOC, " -> skipping tests");
 			}
 		}
 		else
 		{
-			LOGGER.error ("cannot read " + SIMPLE_DOC + " -> skipping tests");
+			LOGGER.error ("cannot read ", SIMPLE_DOC, " -> skipping tests");
 		}
 		if (MATHML_DOC.canRead ())
 		{
@@ -79,12 +79,12 @@ public class XmlTest
 			}
 			catch (Exception e)
 			{
-				LOGGER.error ("cannot read " + MATHML_DOC + " -> skipping tests", e);
+				LOGGER.error (e, "cannot read ", MATHML_DOC, " -> skipping tests");
 			}
 		}
 		else
 		{
-			LOGGER.error ("cannot read " + MATHML_DOC + " -> skipping tests");
+			LOGGER.error ("cannot read ", MATHML_DOC, " -> skipping tests");
 		}
 	}
 	

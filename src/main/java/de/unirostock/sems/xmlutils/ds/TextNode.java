@@ -154,7 +154,7 @@ public class TextNode
 			addModification (MOVED);
 		}
 		
-		LOGGER.debug ("mod: " + modified + "(" + xPath + ")");
+		LOGGER.debug ("mod: ", modified, "(", xPath, ")");
 		return (modified & (MODIFIED | MOVED | UNMAPPED)) != 0;
 	}
 	

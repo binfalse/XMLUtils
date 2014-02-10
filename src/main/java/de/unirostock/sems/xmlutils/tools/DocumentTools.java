@@ -69,7 +69,7 @@ public class DocumentTools
 		}
 		catch (Exception e)
 		{
-			LOGGER.error ("error creating subdoc", e);
+			LOGGER.error (e, "error creating subdoc");
 			return null;
 		}
 	}
@@ -95,7 +95,7 @@ public class DocumentTools
 		}
 		catch (Exception e)
 		{
-			LOGGER.error ("error creating subdoc", e);
+			LOGGER.error (e, "error creating subdoc");
 			return "error creating doc: " + e.getMessage ();
 		}
 	}
@@ -122,7 +122,7 @@ public class DocumentTools
 		}
 		catch (Exception e)
 		{
-			LOGGER.error ("error creating subdoc", e);
+			LOGGER.error (e, "error creating subdoc");
 			return "error creating doc: " + e.getMessage ();
 		}
 	}

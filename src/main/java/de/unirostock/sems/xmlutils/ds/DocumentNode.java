@@ -385,9 +385,9 @@ public class DocumentNode
 			return;
 		else if (!children.remove (toRemove))
 		{
-			LOGGER.error ("we produced an inconsistent state. we removed a node"
-				+ " from tag-mapped children, but weren't able to find it in"
-				+ " children!?");
+			LOGGER.error ("we produced an inconsistent state. we removed a node",
+				" from tag-mapped children, but weren't able to find it in",
+				" children!?");
 			throw new XmlDocumentConsistencyException ("inconsistens state."
 				+ " there was a node in tag-mapped children, but not in children!?");
 		}
@@ -660,13 +660,13 @@ public class DocumentNode
 		}
 		if (kidChanged)
 			addModification (SUB_MODIFIED);
-		LOGGER.debug ("evaluate kids changed: " + kidChanged + " -- for " + xPath);
+		LOGGER.debug ("evaluate kids changed: ", kidChanged, " -- for ", xPath);
 		
 		// do we have a connection?
 		Connection con = conMgmr.getConnectionForNode (this);
 		if (con == null)
 		{
-			LOGGER.debug (xPath + " is unmapped");
+			LOGGER.debug (xPath, " is unmapped");
 			addModification (UNMAPPED);
 			// kids also unconnected? -> SUBTREEUNMAPPED
 			if (kidsUnmapped)
@@ -676,7 +676,7 @@ public class DocumentNode
 		
 		// ok, let's compare
 		TreeNode partner = con.getPartnerOf (this);
-		LOGGER.debug ("evaluate " + xPath + " is mapped to " + partner.getXPath ());
+		LOGGER.debug ("evaluate ", xPath, " is mapped to ", partner.getXPath ());
 		
 		// different content?
 		if (contentDiffers (partner))
@@ -686,7 +686,7 @@ public class DocumentNode
 		if (networkDiffers (partner, conMgmr, con))
 			addModification (MOVED);
 		
-		LOGGER.debug ("mod of " + xPath + " = " + modified);
+		LOGGER.debug ("mod of ", xPath, " = ", modified);
 		
 		return modified != 0;
 	}
