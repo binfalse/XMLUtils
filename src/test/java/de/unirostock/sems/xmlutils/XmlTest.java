@@ -89,6 +89,23 @@ public class XmlTest
 	}
 	
 	@Test
+	public void testTreeCopy ()
+	{
+		TreeDocument copy = new TreeDocument (simpleFile);
+		assertTrue (copy.equals (simpleFile));
+
+		testNodeStuff (copy.getRoot ());
+		
+		TreeNode tn = copy.getNodeByPath ("/conversations[1]/message[1]/from[1]/text()[1]");
+		assertNotNull ("node with path '/conversations[1]/message[1]/from[1]/text()[1]' is suppossed to be non-null", tn);
+		TextNode text = (TextNode) tn;
+		testNodeStuff (text);
+		text.setText ("Ron");
+		
+		assertFalse (copy.equals (simpleFile));
+	}
+	
+	@Test
 	public void testDocReadWrite ()
 	{
 		String prettyDocument = DocumentTools.printPrettySubDoc (simpleFile.getRoot ());

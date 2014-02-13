@@ -173,6 +173,22 @@ public class TreeDocument
 	
 	
 	/**
+	 * Instantiates a new tree document as a copy of another tree document.
+	 *
+	 * @param td the tree document to copy
+	 */
+	public TreeDocument (TreeDocument td)
+	{
+		init ();
+		uniqueIds = true;
+		root = td.root.extract ();
+		integrate (root, true);
+		this.ordered = td.ordered;
+		this.baseUri = td.baseUri;
+	}
+	
+	
+	/**
 	 * Resort subtrees.
 	 */
 	public void resortSubtrees ()
