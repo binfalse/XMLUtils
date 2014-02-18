@@ -41,7 +41,7 @@
         <dependency>
             <groupId>de.binfalse</groupId>
             <artifactId>BFUtils</artifactId>
-            <version>[0.3,)</version>
+            <version>0.3.2</version>
         </dependency>
     </dependencies>
     <distributionManagement>
