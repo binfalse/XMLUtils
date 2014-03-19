@@ -230,7 +230,7 @@ public class XmlTest
 			// test for typical content functions.
 			assertTrue (
 				"original mathml doesn't seem to be content mathml",
-				orig.contains ("<apply>") && orig.contains ("<plus/>")
+				orig.contains ("<apply>") && (orig.contains ("<plus />") || orig.contains ("<plus/>"))
 					&& orig.contains ("<ci>"));
 			
 			String presentation = DocumentTools
@@ -240,6 +240,7 @@ public class XmlTest
 			assertTrue (
 				"converted mathml doesn't seem to be presentation mathml",
 				!presentation.contains ("<apply>")
+					&& !presentation.contains ("<plus />")
 					&& !presentation.contains ("<plus/>")
 					&& presentation.contains ("<mrow>") && presentation.contains ("<mi>"));
 		}
@@ -356,12 +357,12 @@ public class XmlTest
 		testNodeStuff (reply);
 		assertNotNull ("reply shouldn't be null", reply);
 		assertNotNull ("replies attribute shouldn't be null",
-			reply.getAttribute ("replies"));
+			reply.getAttributeValue ("replies"));
 		assertNotNull ("replies target shouln't be null",
-			simpleFile.getNodeById (reply.getAttribute ("replies")));
+			simpleFile.getNodeById (reply.getAttributeValue ("replies")));
 		
 		DocumentNode initialMessage = simpleFile.getNodeById (reply
-			.getAttribute ("replies"));
+			.getAttributeValue ("replies"));
 		testNodeStuff (initialMessage);
 		assertNotNull ("content of initial message shouldn't be null",
 			initialMessage.getChildrenWithTag ("content"));
@@ -391,7 +392,7 @@ public class XmlTest
 		
 		DocumentNode reply = simpleFile.getNodeById ("messagetwo");
 		DocumentNode initialMessage = simpleFile.getNodeById (reply
-			.getAttribute ("replies"));
+			.getAttributeValue ("replies"));
 		// test content differs and hashes and weights
 		List<DocumentNode> nodes = simpleFile.getNodesByTag ("message");
 		assertEquals ("expected to find exactly two message nodes", 2, nodes.size ());

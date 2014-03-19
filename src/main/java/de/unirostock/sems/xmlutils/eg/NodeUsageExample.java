@@ -10,6 +10,7 @@ import java.util.List;
 
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.jdom2.JDOMException;
 import org.xml.sax.SAXException;
 
 import de.unirostock.sems.xmlutils.ds.DocumentNode;
@@ -36,6 +37,7 @@ public class NodeUsageExample
 	 * @throws FileNotFoundException
 	 * @throws XmlDocumentParseException
 	 * @throws XmlDocumentConsistencyException
+	 * @throws JDOMException 
 	 */
 	public static void main (String[] args)
 		throws XmlDocumentParseException,
@@ -43,7 +45,7 @@ public class NodeUsageExample
 			ParserConfigurationException,
 			SAXException,
 			IOException,
-			XmlDocumentConsistencyException
+			XmlDocumentConsistencyException, JDOMException
 	{
 		File file = new File ("test/simple.xml");
 		TreeDocument document = new TreeDocument (XmlTools.readDocument (file),
@@ -96,7 +98,7 @@ public class NodeUsageExample
 		System.out.println ("tag name: " + message.getTagName ());
 		System.out.println ("attributes in this node:");
 		for (String attr : message.getAttributes ())
-			System.out.println ("\t" + attr + " => " + message.getAttribute (attr));
+			System.out.println ("\t" + attr + " => " + message.getAttributeValue (attr));
 		System.out.println ();
 		System.out.println ("--- 8< --- 8< --- 8< --- 8< --- 8< --- 8< ---");
 		System.out.println ();

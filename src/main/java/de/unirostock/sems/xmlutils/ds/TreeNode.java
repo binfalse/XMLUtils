@@ -6,8 +6,7 @@ package de.unirostock.sems.xmlutils.ds;
 import java.util.HashMap;
 import java.util.List;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
+import org.jdom2.Element;
 
 import de.unirostock.sems.xmlutils.comparison.Connection;
 import de.unirostock.sems.xmlutils.comparison.ConnectionManager;
@@ -366,9 +365,8 @@ public abstract class TreeNode
 	
 	
 	/**
-	 * Attaches the subtree rooted in this node to the node parent of the document
-	 * doc. Recursively attaches its children.
-	 * If the parent is null, this node becomes root of doc. Will fail for
+	 * Attaches the subtree rooted in this node to the node parent.
+	 * Recursively attaches its children. Will fail for
 	 * 
 	 * <code>
 	 * parent == null && this.getType () == TreeNode.TEXT_NODE
@@ -376,13 +374,11 @@ public abstract class TreeNode
 	 * 
 	 * That means a text node cannot become root.
 	 * 
-	 * @param doc
-	 *          the document to write our node to
 	 * @param parent
-	 *          the parent element which will root the node. If null, this node
+	 *          the parent element which will root this node. If null, this node
 	 *          will be root in the document
 	 */
-	public abstract void getSubDoc (Document doc, Element parent);
+	public abstract Element getSubDoc (Element parent);
 	
 	
 	/**

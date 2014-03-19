@@ -10,12 +10,12 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
-import org.w3c.dom.Attr;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
+import org.jdom2.Attribute;
+import org.jdom2.Content;
+import org.jdom2.Content.CType;
+import org.jdom2.Element;
+import org.jdom2.Namespace;
+import org.jdom2.Text;
 
 import de.binfalse.bflog.LOGGER;
 import de.binfalse.bfutils.GeneralTools;
@@ -42,11 +42,14 @@ public class DocumentNode
 	/** The tag name. */
 	private String														tagName;
 	
+	private String nsUri;
+	private String nsPrefix;
+	
 	/** The id. */
 	private String														id;
 	
 	/** The attributes. */
-	private Map<String, String>							attributes;
+	private Map<String, Attribute>							attributes;
 	
 	/** The children of this node. */
 	private List<TreeNode>									children;
@@ -89,6 +92,8 @@ public class DocumentNode
 		super (TreeNode.DOC_NODE, parent, null, parent == null ? 0 : parent.level + 1);
 		
 		tagName = toCopy.tagName;
+		nsPrefix = toCopy.nsPrefix;
+		nsUri = toCopy.nsUri;
 		id = toCopy.id;
 		sizeSubtree = toCopy.sizeSubtree;
 		numLeaves = toCopy.numLeaves;
@@ -102,9 +107,9 @@ public class DocumentNode
 			xPath = parent.getXPath ();
 		xPath += "/" + tagName + "[" + numChild + "]";
 		
-		attributes = new TreeMap<String, String> ();
+		attributes = new TreeMap<String, Attribute> ();
 		for (String attr : toCopy.attributes.keySet ())
-			attributes.put (attr, toCopy.attributes.get (attr));
+			attributes.put (attr, toCopy.attributes.get (attr).clone ());
 		
 		children = new ArrayList<TreeNode> ();
 		childrenByTag = new HashMap<String, List<TreeNode>> ();
@@ -169,9 +174,11 @@ public class DocumentNode
 		// init the tree node
 		super (TreeNode.DOC_NODE, parent, doc, level);
 		// init objects
-		attributes = new TreeMap<String, String> ();
+		attributes = new TreeMap<String, Attribute> ();
 		children = new ArrayList<TreeNode> ();
-		tagName = element.getTagName ();
+		tagName = element.getName ();//.getTagName ();
+		nsPrefix = element.getNamespacePrefix ();
+		nsUri = element.getNamespaceURI ();
 		sizeSubtree = numLeaves = 0;
 		weighter = w;
 		
@@ -183,42 +190,45 @@ public class DocumentNode
 		xPath += "/" + tagName + "[" + numChild + "]";
 		
 		// find attributes
-		NamedNodeMap a = element.getAttributes ();
+		List<Attribute> attrs = element.getAttributes ();
+		for (Attribute a : attrs)
+			attributes.put (a.getName (), a);
+			
+		/*NamedNodeMap a = element.getAttributes ();
 		int numAttrs = a.getLength ();
 		for (int i = 0; i < numAttrs; i++)
 		{
 			Attr attr = (Attr) a.item (i);
 			attributes.put (attr.getNodeName (), attr.getNodeValue ());
-		}
+		}*/
 		
 		// get id
-		id = attributes.get (ID_ATTR);
+		id = attributes.get (ID_ATTR) == null ? null : attributes.get (ID_ATTR).getValue ();
 		
 		// add kids
-		NodeList kids = element.getChildNodes ();
-		int numKids = kids.getLength ();
+		List<Content> kids = element.getContent ();//.getChildren ();
 		childrenByTag = new HashMap<String, List<TreeNode>> ();
-		for (int i = 0; i < numKids; i++)
+		for (Content current : kids)
 		{
-			Node current = kids.item (i);
+			//Node current = kids.item (i);
 			// == DOC_NODE
-			if (current.getNodeType () == Node.ELEMENT_NODE)
+			if (current.getCType () == CType.Element)
 			{
 				Element cur = (Element) current;
-				if (childrenByTag.get (cur.getTagName ()) == null)
-					childrenByTag.put (cur.getTagName (), new ArrayList<TreeNode> ());
+				if (childrenByTag.get (cur.getName ()) == null)
+					childrenByTag.put (cur.getName (), new ArrayList<TreeNode> ());
 				DocumentNode kid = new DocumentNode (cur, this, doc, w, childrenByTag
-					.get (cur.getTagName ()).size () + 1, level + 1);
+					.get (cur.getName ()).size () + 1, level + 1);
 				
 				children.add (kid);
-				childrenByTag.get (cur.getTagName ()).add (kid);
+				childrenByTag.get (cur.getName ()).add (kid);
 				sizeSubtree += kid.getSizeSubtree () + 1;
 				numLeaves += kid.getNumLeaves ();
 			}
 			// == TEXT_NODE
-			if (current.getNodeType () == Node.TEXT_NODE)
+			if (current.getCType () == CType.Text)
 			{
-				String text = current.getNodeValue ().trim ();
+				String text = ((Text) current).getText ().trim ();
 				
 				// lets discard whitespace-only nodes
 				if (text.length () < 1)
@@ -235,6 +245,8 @@ public class DocumentNode
 				numLeaves++;
 			}
 		}
+		
+		
 		calcHash ();
 		if (numLeaves == 0)
 			numLeaves = 1;
@@ -436,9 +448,56 @@ public class DocumentNode
 	 *          the name of the attribute
 	 * @return the value of the attribute
 	 */
-	public String getAttribute (String attr)
+	public String getAttributeValue (String attr)
+	{
+		if (attributes.get (attr) == null)
+			return null;
+		return attributes.get (attr).getValue ();
+	}
+	
+	
+	/**
+	 * Gets the an attribute.
+	 * 
+	 * @param attr
+	 *          the name of the attribute
+	 * @return the the attribute
+	 */
+	public Attribute getAttribute (String attr)
 	{
 		return attributes.get (attr);
+	}
+	
+	
+	/**
+	 * Gets the value of an attribute with matching name space.
+	 * <strong>Don't use it to get the id, use getId () instead!</strong>
+	 *
+	 * @param attr the name of the attribute
+	 * @param nsContains the name space must contain <code>nsContains</code>
+	 * @return the value of the attribute
+	 */
+	public String getAttributeValue (String attr, String nsContains)
+	{
+		if (attributes.get (attr) == null)
+			return null;
+		Attribute a = attributes.get (attr);
+		if (a.getNamespaceURI ().contains (nsContains))
+			return a.getValue ();
+		return null;
+	}
+	
+	
+	/**
+	 * Overrides an attribute.
+	 * 
+	 * @param attr
+	 *          the attribute
+	 */
+	public void setAttribute (Attribute attr)
+	{
+		attributes.put (attr.getName (), attr);
+		reSetupStructureUp ();
 	}
 	
 	
@@ -452,8 +511,9 @@ public class DocumentNode
 	 */
 	public void setAttribute (String attr, String value)
 	{
-		attributes.put (attr, value);
-		reSetupStructureUp ();
+		setAttribute (new Attribute (attr, value));
+		/*attributes.put (attr, new Attribute (attr, value));
+		reSetupStructureUp ();*/
 	}
 	
 	
@@ -587,6 +647,37 @@ public class DocumentNode
 	}
 	
 	
+	/**
+	 * Gets the weighter used to compute the weight of this document.
+	 *
+	 * @return the weighter
+	 */
+	public Weighter getWeighter ()
+	{
+		return weighter;
+	}
+	
+	/**
+	 * Gets the name space uri.
+	 *
+	 * @return the name space uri
+	 */
+	public String getNameSpaceUri ()
+	{
+		return nsUri;
+	}
+	
+	/**
+	 * Gets the name space prefix.
+	 *
+	 * @return the name space prefix
+	 */
+	public String getNameSpacePrefix ()
+	{
+		return nsPrefix;
+	}
+	
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -595,22 +686,27 @@ public class DocumentNode
 	 * org.w3c.dom.Element)
 	 */
 	@Override
-	public void getSubDoc (Document doc, Element parent)
+	public Element getSubDoc (Element parent)
 	{
+		// TODO: NAMESPACE
+		
 		// create a new element
-		Element node = doc.createElement (tagName);
+		Element node = new Element (tagName, nsPrefix, nsUri);
 		for (String att : attributes.keySet ())
-			node.setAttribute (att, attributes.get (att));
+		{
+			Attribute a = attributes.get (att);
+			node.setAttribute (a.getName (), a.getValue (), a.getNamespace ());
+		}
 		
 		// are we root?
-		if (parent == null)
-			doc.appendChild (node);
-		else
-			parent.appendChild (node);
+		if (parent != null)
+			parent.addContent (node);
 		
 		// attach children
 		for (TreeNode kid : children)
-			kid.getSubDoc (doc, node);
+			kid.getSubDoc (node);
+		
+		return node;
 	}
 	
 	
@@ -813,5 +909,16 @@ public class DocumentNode
 			s += child.dump (prefix + "\t");
 		}
 		return s;
+	}
+
+
+	/**
+	 * Gets the name space associated with this node.
+	 *
+	 * @return the name space
+	 */
+	public Namespace getNameSpace ()
+	{
+		return Namespace.getNamespace (nsPrefix, nsUri);
 	}
 }

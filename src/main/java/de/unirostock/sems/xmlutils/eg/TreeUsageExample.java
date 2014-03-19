@@ -4,12 +4,9 @@
 package de.unirostock.sems.xmlutils.eg;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
-import javax.xml.parsers.ParserConfigurationException;
-
-import org.xml.sax.SAXException;
+import org.jdom2.JDOMException;
 
 import de.unirostock.sems.xmlutils.ds.DocumentNode;
 import de.unirostock.sems.xmlutils.ds.TreeDocument;
@@ -28,19 +25,14 @@ public class TreeUsageExample
 {
 	
 	/**
-	 * @param args
-	 * @throws IOException
-	 * @throws SAXException
-	 * @throws ParserConfigurationException
-	 * @throws FileNotFoundException
-	 * @throws XmlDocumentParseException
+	 * The main method.
+	 *
+	 * @param args the arguments
+	 * @throws XmlDocumentParseException the xml document parse exception
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 * @throws JDOMException the jDOM exception
 	 */
-	public static void main (String[] args)
-		throws XmlDocumentParseException,
-			FileNotFoundException,
-			ParserConfigurationException,
-			SAXException,
-			IOException
+	public static void main (String[] args) throws XmlDocumentParseException, IOException, JDOMException
 	{
 		File file = new File ("test/simple.xml");
 		TreeDocument document = new TreeDocument (XmlTools.readDocument (file),

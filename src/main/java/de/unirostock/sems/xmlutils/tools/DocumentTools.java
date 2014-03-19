@@ -3,15 +3,14 @@ package de.unirostock.sems.xmlutils.tools;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
-import org.w3c.dom.Document;
+import org.jdom2.Document;
+import org.jdom2.input.SAXBuilder;
 
 import de.binfalse.bflog.LOGGER;
 import de.binfalse.bfutils.SimpleOutputStream;
@@ -30,7 +29,7 @@ public class DocumentTools
 	/**
 	 * no need to recreate the builder everytime...
 	 */
-	private static DocumentBuilder builder;
+	private static SAXBuilder builder;
 	
 	/** The transformer to convert content mathml to presentation mathml. */
 	private static Transformer	mathTransformer;
@@ -61,10 +60,10 @@ public class DocumentTools
 		try
 		{
 			if (builder == null)
-				builder = DocumentBuilderFactory.newInstance ().newDocumentBuilder ();
+				builder = XmlTools.getBuilder ();
 			
-			Document d = builder.newDocument ();
-			node.getSubDoc (d, null);
+			//Document d = builder.newDocument ();
+			Document d = new Document (node.getSubDoc (null));
 			return d;
 		}
 		catch (Exception e)
@@ -87,11 +86,11 @@ public class DocumentTools
 		try
 		{
 			if (builder == null)
-				builder = DocumentBuilderFactory.newInstance ().newDocumentBuilder ();
+				builder = XmlTools.getBuilder ();
 			
-			Document d = builder.newDocument ();
-			node.getSubDoc (d, null);
-			return XmlTools.printDocument (d);
+			/*Document d = builder.newDocument ();
+			node.getSubDoc (d, null);*/
+			return XmlTools.printDocument (new Document (node.getSubDoc (null)));
 		}
 		catch (Exception e)
 		{
@@ -113,11 +112,11 @@ public class DocumentTools
 		try
 		{
 			if (builder == null)
-				builder = DocumentBuilderFactory.newInstance ().newDocumentBuilder ();
+				builder = XmlTools.getBuilder ();
 			
-			Document d = builder.newDocument ();
-			node.getSubDoc (d, null);
-			return XmlTools.prettyPrintDocument (d, new SimpleOutputStream ())
+			/*Document d = builder.newDocument ();
+			node.getSubDoc (d, null);*/
+			return XmlTools.prettyPrintDocument (new Document (node.getSubDoc (null)))
 				.toString ();
 		}
 		catch (Exception e)
@@ -153,7 +152,7 @@ public class DocumentTools
 		SimpleOutputStream out = new SimpleOutputStream ();
 		String math = printSubDoc (doc);
 		// xslt cannot namespace
-		math = math.replaceAll ("\\S+:\\S+\\s*=\\s*\"[^\"]*\"", "");
+		math = math.replaceAll ("\\S+:\\S+\\s*=\\s*\"[^\"]*\"", "").replaceAll (" /", "/");
 		
 		mathTransformer.transform (
 			new StreamSource (new ByteArrayInputStream (math.getBytes ())),

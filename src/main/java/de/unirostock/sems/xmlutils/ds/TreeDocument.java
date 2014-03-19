@@ -11,7 +11,7 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import org.w3c.dom.Document;
+import org.jdom2.Document;
 
 import de.unirostock.sems.xmlutils.alg.SemsWeighter;
 import de.unirostock.sems.xmlutils.alg.Weighter;
@@ -90,7 +90,7 @@ public class TreeDocument
 	{
 		init ();
 		Weighter w = new SemsWeighter (); // default sems weighter
-		root = new DocumentNode (d.getDocumentElement (), null, this, w, 1, 0);
+		root = new DocumentNode (d.getRootElement (), null, this, w, 1, 0);
 		ordered = true;
 		uniqueIds = true;
 		this.baseUri = baseUri;
@@ -115,7 +115,7 @@ public class TreeDocument
 		init ();
 		if (w == null)
 			w = new SemsWeighter (); // default sems weighter
-		root = new DocumentNode (d.getDocumentElement (), null, this, w, 1, 0);
+		root = new DocumentNode (d.getRootElement (), null, this, w, 1, 0);
 		ordered = true;
 		uniqueIds = true;
 		this.baseUri = baseUri;
@@ -139,7 +139,7 @@ public class TreeDocument
 	{
 		init ();
 		Weighter w = new SemsWeighter (); // default sems weighter
-		root = new DocumentNode (d.getDocumentElement (), null, this, w, 1, 0);
+		root = new DocumentNode (d.getRootElement (), null, this, w, 1, 0);
 		this.ordered = ordered;
 		uniqueIds = true;
 	}
@@ -165,7 +165,7 @@ public class TreeDocument
 		init ();
 		if (w == null)
 			w = new SemsWeighter (); // default sems weighter
-		root = new DocumentNode (d.getDocumentElement (), null, this, w, 1, 0);
+		root = new DocumentNode (d.getRootElement (), null, this, w, 1, 0);
 		this.ordered = ordered;
 		uniqueIds = true;
 		this.baseUri = baseUri;

@@ -4,31 +4,20 @@
 package de.unirostock.sems.xmlutils.tools;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
+import java.io.InputStream;
+import java.net.URISyntaxException;
+import java.net.URL;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
+import org.jdom2.Document;
+import org.jdom2.JDOMException;
+import org.jdom2.input.SAXBuilder;
+import org.jdom2.output.Format;
+import org.jdom2.output.XMLOutputter;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.ls.DOMImplementationLS;
-import org.w3c.dom.ls.LSOutput;
-import org.w3c.dom.ls.LSSerializer;
-import org.xml.sax.SAXException;
-
-import de.binfalse.bfutils.SimpleOutputStream;
+import de.binfalse.bfutils.FileRetriever;
 
 
 
@@ -42,79 +31,86 @@ public class XmlTools
 	/**
 	 * no need to recreate the builder everytime...
 	 */
-	private static DocumentBuilder builder;
+	private static SAXBuilder builder;
 	
+	
+	public static SAXBuilder getBuilder ()
+	{
+		return new SAXBuilder ();
+	}
 	
 	/**
 	 * Reads an XML document from File.
-	 * 
-	 * @param file
-	 *          the document to read
+	 *
+	 * @param file the document to read
 	 * @return the document
-	 * @throws ParserConfigurationException
-	 *           the parser configuration exception
-	 * @throws FileNotFoundException
-	 *           the file not found exception
-	 * @throws SAXException
-	 *           the sAX exception
-	 * @throws IOException
-	 *           Signals that an I/O exception has occurred.
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 * @throws JDOMException the jDOM exception
 	 */
 	public static Document readDocument (File file)
-		throws ParserConfigurationException,
-			FileNotFoundException,
-			SAXException,
-			IOException
+		throws IOException, JDOMException
 	{
 		if (builder == null)
-			builder = DocumentBuilderFactory.newInstance ().newDocumentBuilder ();
+			builder = getBuilder ();//DocumentBuilderFactory.newInstance ().newDocumentBuilder ();
 		
-		return builder.parse (new FileInputStream (file));
+		return builder.build (new FileInputStream (file));
+	}
+	
+	
+	/**
+	 * Read an XML document from web.
+	 *
+	 * @param url the url to the document
+	 * @return the document
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 * @throws URISyntaxException the uRI syntax exception
+	 * @throws JDOMException the jDOM exception
+	 */
+	public static Document readDocument (URL url) throws IOException, URISyntaxException, JDOMException
+	{
+		if (builder == null)
+			builder = getBuilder ();//DocumentBuilderFactory.newInstance ().newDocumentBuilder ();
+
+		File tmp = File.createTempFile ("Bives", "download");
+		tmp.deleteOnExit ();
+		FileRetriever.getFile (url.toURI (), tmp);
+		
+		return builder.build (new FileInputStream (tmp));
+	}
+	
+	/**
+	 * Reads an XML document from File.
+	 *
+	 * @param is the stream containing the document
+	 * @return the document
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 * @throws JDOMException the jDOM exception
+	 */
+	public static Document readDocument (InputStream is)
+		throws IOException, JDOMException
+	{
+		if (builder == null)
+			builder = getBuilder ();//DocumentBuilderFactory.newInstance ().newDocumentBuilder ();
+		
+		return builder.build (is);
 	}
 	
 	
 	/**
 	 * Read an XML document from String.
-	 * 
-	 * @param doc
-	 *          the string containing the XML document
+	 *
+	 * @param doc the string containing the XML document
 	 * @return the document
-	 * @throws ParserConfigurationException
-	 *           the parser configuration exception
-	 * @throws SAXException
-	 *           the sAX exception
-	 * @throws IOException
-	 *           Signals that an I/O exception has occurred.
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 * @throws JDOMException the jDOM exception
 	 */
 	public static Document readDocument (String doc)
-		throws ParserConfigurationException,
-			SAXException,
-			IOException
+		throws IOException, JDOMException
 	{
 		if (builder == null)
-			builder = DocumentBuilderFactory.newInstance ().newDocumentBuilder ();
+			builder = getBuilder ();//DocumentBuilderFactory.newInstance ().newDocumentBuilder ();
 		
-		return builder.parse (new ByteArrayInputStream (doc.getBytes ()));
-	}
-	
-	
-	/**
-	 * Pretty print a document.
-	 * 
-	 * @param doc
-	 *          the doccument
-	 * @return the pretty string
-	 * @throws IOException
-	 *           the IO exception
-	 * @throws TransformerException
-	 *           the transformer exception
-	 */
-	public static String prettyPrintDocument (Document doc)
-		throws IOException,
-			TransformerException
-	{
-		return XmlTools.prettyPrintDocument (doc, new SimpleOutputStream ())
-			.toString ();
+		return builder.build (new ByteArrayInputStream (doc.getBytes ()));
 	}
 	
 	
@@ -127,49 +123,19 @@ public class XmlTools
 	 */
 	public static String printDocument (Document doc)
 	{
-		DOMImplementationLS domImplLS = (DOMImplementationLS) doc
-			.getImplementation ();
-		
-		ByteArrayOutputStream baos = new ByteArrayOutputStream ();
-		
-		LSOutput lso = domImplLS.createLSOutput ();
-		lso.setByteStream (baos);
-		LSSerializer lss = domImplLS.createLSSerializer ();
-		lss.write (doc, lso);
-		return baos.toString ();
-		
+		return new XMLOutputter(Format.getCompactFormat ()).outputString(doc);
 	}
 	
 	
 	/**
-	 * Pretty print a document.
-	 * 
-	 * @param doc
-	 *          the document
-	 * @param out
-	 *          the output stream
+	 * Pretty prints a document.
+	 *
+	 * @param doc the document
 	 * @return the output stream
-	 * @throws IOException
-	 *           the IO exception
-	 * @throws TransformerException
-	 *           the transformer exception
 	 */
-	public static OutputStream prettyPrintDocument (Document doc, OutputStream out)
-		throws IOException,
-			TransformerException
+	public static String prettyPrintDocument (Document doc)
 	{
-		TransformerFactory tf = TransformerFactory.newInstance ();
-		Transformer transformer = tf.newTransformer ();
-		transformer.setOutputProperty (OutputKeys.OMIT_XML_DECLARATION, "no");
-		transformer.setOutputProperty (OutputKeys.METHOD, "xml");
-		transformer.setOutputProperty (OutputKeys.INDENT, "yes");
-		transformer.setOutputProperty (OutputKeys.ENCODING, "UTF-8");
-		transformer.setOutputProperty ("{http://xml.apache.org/xslt}indent-amount",
-			"4");
-		
-		transformer.transform (new DOMSource (doc), new StreamResult (
-			new OutputStreamWriter (out, "UTF-8")));
-		return out;
+		return new XMLOutputter(Format.getPrettyFormat()).outputString(doc);
 	}
 	
 }

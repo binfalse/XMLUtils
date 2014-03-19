@@ -5,8 +5,7 @@ package de.unirostock.sems.xmlutils.ds;
 
 import java.util.HashMap;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
+import org.jdom2.Element;
 
 import de.binfalse.bflog.LOGGER;
 import de.binfalse.bfutils.GeneralTools;
@@ -179,9 +178,11 @@ public class TextNode
 	 * org.w3c.dom.Element)
 	 */
 	@Override
-	public void getSubDoc (Document doc, Element parent)
+	public Element getSubDoc (Element parent)
 	{
-		parent.appendChild (doc.createTextNode (text));
+		if (parent != null)
+			parent.setText (text);
+		return null;
 	}
 	
 	
