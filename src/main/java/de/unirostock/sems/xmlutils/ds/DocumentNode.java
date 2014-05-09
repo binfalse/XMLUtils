@@ -633,7 +633,7 @@ public class DocumentNode
 		{
 			if (cmp.attributes.get (name) == null)
 				unmatch += 1;
-			else if (!cmp.attributes.get (name).equals (attributes.get (name)))
+			else if (!cmp.attributes.get (name).getValue ().equals (attributes.get (name).getValue ()))
 				unmatch += 2;
 		}
 		for (String name : cmp.attributes.keySet ())
