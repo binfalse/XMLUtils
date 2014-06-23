@@ -59,7 +59,7 @@
     <macrodef name="assertDirAvailable">
         <attribute name="dir" />
         <sequential>
-            <fail message="Please create dir @{dir} containing the depenencies:${line.separator}${line.separator} &gt;&gt; BFlog${line.separator} &gt;&gt; BFUtils${line.separator}${line.separator}(download latest versions from http://bin.sems.uni-rostock.de/)">
+            <fail message="Please create dir @{dir} containing the depenencies:${line.separator}${line.separator} &gt;&gt; BFlog (available from http://bin.sems.uni-rostock.de/BFLog/)${line.separator} &gt;&gt; BFUtils (available from http://bin.sems.uni-rostock.de/BFUtils/)${line.separator} &gt;&gt; JDOM (http://jdom.org/)">
                 <condition>
                     <not>
                         <available file="@{dir}" type="dir" />
