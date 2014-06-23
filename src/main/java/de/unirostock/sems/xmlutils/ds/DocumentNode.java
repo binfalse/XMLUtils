@@ -55,7 +55,7 @@ public class DocumentNode
 	private List<TreeNode>									children;
 	
 	/** The children mapped by tag names. */
-	private HashMap<String, List<TreeNode>>	childrenByTag;
+	private HashMap<String, ArrayList<TreeNode>>	childrenByTag;
 	
 	/** The hash of the subtree rooted in this node. */
 	private String														subTreeHash;
@@ -112,7 +112,7 @@ public class DocumentNode
 			attributes.put (attr, toCopy.attributes.get (attr).clone ());
 		
 		children = new ArrayList<TreeNode> ();
-		childrenByTag = new HashMap<String, List<TreeNode>> ();
+		childrenByTag = new HashMap<String, ArrayList<TreeNode>> ();
 		
 		for (TreeNode tn : toCopy.getChildren ())
 		{
@@ -207,7 +207,7 @@ public class DocumentNode
 		
 		// add kids
 		List<Content> kids = element.getContent ();//.getChildren ();
-		childrenByTag = new HashMap<String, List<TreeNode>> ();
+		childrenByTag = new HashMap<String, ArrayList<TreeNode>> ();
 		for (Content current : kids)
 		{
 			//Node current = kids.item (i);
@@ -573,12 +573,13 @@ public class DocumentNode
 	 * @return the children having tag as tag name or an empty list if there are
 	 *         no such children
 	 */
+	@SuppressWarnings("unchecked")
 	public List<TreeNode> getChildrenWithTag (String tag)
 	{
-		List<TreeNode> ret = childrenByTag.get (tag);
+		ArrayList<TreeNode> ret = childrenByTag.get (tag);
 		if (ret == null)
 			return new ArrayList<TreeNode> ();
-		return ret;
+		return (ArrayList<TreeNode>) ret.clone ();
 	}
 	
 	
@@ -587,9 +588,13 @@ public class DocumentNode
 	 * 
 	 * @return the children tag map
 	 */
+	@SuppressWarnings("unchecked")
 	public HashMap<String, List<TreeNode>> getChildrenTagMap ()
 	{
-		return childrenByTag;
+		HashMap<String, List<TreeNode>> ret = new HashMap<String, List<TreeNode>> (childrenByTag.size ());
+		for (String tag : childrenByTag.keySet ())
+			ret.put (tag, (ArrayList<TreeNode>) childrenByTag.get (tag).clone ());
+		return ret;
 	}
 	
 	
