@@ -53,6 +53,9 @@ public class XmlTest
 	private static TreeDocument mathmlFile;
 	private static TreeDocument simpleFile;
 
+	/**
+	 * 
+	 */
 	@BeforeClass
 	public static void readFiles ()
 	{
@@ -88,6 +91,9 @@ public class XmlTest
 		}
 	}
 	
+	/**
+	 * 
+	 */
 	@Test
 	public void testTreeCopy ()
 	{
@@ -105,6 +111,9 @@ public class XmlTest
 		assertFalse (copy.equals (simpleFile));
 	}
 	
+	/**
+	 * 
+	 */
 	@Test
 	public void testDocReadWrite ()
 	{
@@ -125,6 +134,9 @@ public class XmlTest
 		}
 	}
 
+	/**
+	 * 
+	 */
 	@Test
 	public void testDocEquals ()
 	{
@@ -149,6 +161,9 @@ public class XmlTest
 	}
 	
 	
+	/**
+	 * 
+	 */
 	@Test
 	public void testNodeDistances ()
 	{
@@ -180,6 +195,10 @@ public class XmlTest
 	}
 	
 	
+	/**
+	 * @param n
+	 * @return size
+	 */
 	public int getSize (TreeNode n)
 	{
 		if (n.getType () == TreeNode.DOC_NODE)
@@ -188,6 +207,9 @@ public class XmlTest
 	}
 	
 	
+	/**
+	 * 
+	 */
 	@Test
 	public void testTreeNodeComparatorBySubtreeSize ()
 	{
@@ -213,6 +235,9 @@ public class XmlTest
 	}
 	
 	
+	/**
+	 * 
+	 */
 	@Test
 	public void testMathML ()
 	{
@@ -252,6 +277,9 @@ public class XmlTest
 	}
 	
 	
+	/**
+	 * 
+	 */
 	@Test
 	public void testSimpleXml ()
 	{
@@ -342,6 +370,9 @@ public class XmlTest
 		assertEquals ("numNodes != foundNodes", numNodes, foundNodes);
 	}
 	
+	/**
+	 * 
+	 */
 	@Test
 	public void testIdAndMapper ()
 	{
@@ -381,6 +412,9 @@ public class XmlTest
 			.getChildren ().get (0)).getLevel ());
 	}
 	
+	/**
+	 * 
+	 */
 	@Test
 	public void testDiffersAndHashesAndNodeStats ()
 	{
@@ -477,6 +511,9 @@ public class XmlTest
 		
 	}
 	
+	/**
+	 * 
+	 */
 	@Test
 	public void testExtract ()
 	{
@@ -521,6 +558,9 @@ public class XmlTest
 		
 	}
 	
+	/**
+	 * 
+	 */
 	@Test
 	public void testRemoveAndInsert ()
 	{
@@ -577,6 +617,9 @@ public class XmlTest
 		assertTrue ("children tag map in root is apparently broken", root.getChildrenWithTag (extract.getTagName ()).get (1) == extract);
 	}
 	
+	/**
+	 * @param node
+	 */
 	public void testNodeStuff (TextNode node)
 	{
 		// test lvl
@@ -589,6 +632,9 @@ public class XmlTest
 			testNodeStuff (node.getParent ());
 	}
 	
+	/**
+	 * @param node
+	 */
 	public void testNodeStuff (DocumentNode node)
 	{
 		// make sure attributes are in correct order

@@ -11,8 +11,10 @@ package de.unirostock.sems.xmlutils.ds;
 public class NodeDistance
 {
 	
-	/** The nodes a and b. */
-	public TreeNode	nodeA, nodeB;
+	/** The node a. */
+	public TreeNode	nodeA;
+	/** The node b. */
+	public TreeNode nodeB;
 	
 	/** The distance. */
 	public double		distance;

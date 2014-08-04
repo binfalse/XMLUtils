@@ -114,7 +114,9 @@ public class TextNode
 	/**
 	 * Sets the text content of this node.
 	 * <strong>Be Careful:</strong> since we have to recalculate all hashes this
-	 * operation is very expensive!
+	 * operation is quite expensive!
+	 * 
+	 * @param newText the text to be stored in this node 
 	 */
 	public void setText (String newText)
 	{

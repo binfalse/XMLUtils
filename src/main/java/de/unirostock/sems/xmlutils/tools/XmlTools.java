@@ -34,6 +34,9 @@ public class XmlTools
 	private static SAXBuilder builder;
 	
 	
+	/**
+	 * @return the sax builder
+	 */
 	public static SAXBuilder getBuilder ()
 	{
 		return new SAXBuilder ();

@@ -205,6 +205,8 @@ public class TreeDocument
 	 * 
 	 * @param node
 	 *          the node to integrate
+	 * @param recursively
+	 * 					recursively integrate the node's children
 	 */
 	public void integrate (TreeNode node, boolean recursively)
 	{
@@ -245,6 +247,8 @@ public class TreeDocument
 	 * 
 	 * @param node
 	 *          the node
+	 * @param recursively 
+	 * 					recursively separate the node's children
 	 */
 	public void separate (TreeNode node, boolean recursively)
 	{

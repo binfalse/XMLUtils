@@ -185,11 +185,10 @@ public abstract class TreeNode
 	
 	/**
 	 * Gets the node type.
+	 * @see #DOC_NODE
+	 * @see #TEXT_NODE
 	 * 
 	 * @return the node type
-	 * 
-	 * @see de.unirostock.sems.xmlutils.ds.TreeNode.DOC_NODE
-	 * @see de.unirostock.sems.xmlutils.ds.TreeNode.TEXT_NODE
 	 */
 	public int getType ()
 	{
@@ -377,6 +376,7 @@ public abstract class TreeNode
 	 * @param parent
 	 *          the parent element which will root this node. If null, this node
 	 *          will be root in the document
+	 * @return the sub doc
 	 */
 	public abstract Element getSubDoc (Element parent);
 	
