@@ -3,7 +3,7 @@
     <groupId>de.unirostock.sems</groupId>
     <artifactId>xmlutils</artifactId>
     <packaging>jar</packaging>
-    <version>0.4.2</version>
+    <version>0.4.3</version>
     <name>xmlutils</name>
     <description>
         A toolkit useful for working with XML documents
@@ -97,11 +97,9 @@
                     <descriptorRefs>
                         <descriptorRef>jar-with-dependencies</descriptorRef>
                     </descriptorRefs>
-                    <finalName>${project.artifactId}-${project.version}-fat</finalName>
-                    <appendAssemblyId>false</appendAssemblyId>
                     <archive>
                         <manifest>
-                            <mainClass>de.unirostock.sems.bives.Main</mainClass>
+                            <mainClass>de.unirostock.sems.xmlutils.run.XMLTools</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
