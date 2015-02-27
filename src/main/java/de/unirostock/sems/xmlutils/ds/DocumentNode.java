@@ -328,10 +328,8 @@ public class DocumentNode
 	}
 	
 	
-	/**
-	 * Gets the tag name.
-	 * 
-	 * @return the tag name
+	/* (non-Javadoc)
+	 * @see de.unirostock.sems.xmlutils.ds.TreeNode#getTagName()
 	 */
 	public String getTagName ()
 	{

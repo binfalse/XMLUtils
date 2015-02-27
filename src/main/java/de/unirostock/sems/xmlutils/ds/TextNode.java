@@ -301,4 +301,14 @@ public class TextNode
 	{
 		return "TEXT: " + weight + "\t(" + xPath + ")\t" + text;
 	}
+
+
+	/* (non-Javadoc)
+	 * @see de.unirostock.sems.xmlutils.ds.TreeNode#getTagName()
+	 */
+	@Override
+	public String getTagName ()
+	{
+		return TEXT_TAG;
+	}
 }

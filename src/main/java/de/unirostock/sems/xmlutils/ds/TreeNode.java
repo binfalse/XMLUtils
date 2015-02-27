@@ -185,6 +185,7 @@ public abstract class TreeNode
 	
 	/**
 	 * Gets the node type.
+	 * 
 	 * @see #DOC_NODE
 	 * @see #TEXT_NODE
 	 * 
@@ -316,6 +317,15 @@ public abstract class TreeNode
 			return true;
 		return !ownHash.equals (tn.ownHash);
 	}
+	
+	
+	/**
+	 * Gets the tag name. For document nodes it's the actual tag name, in case of
+	 * text nodes you'll receive <code>TreeNode.TEXT_TAG</code>.
+	 * 
+	 * @return the tag name
+	 */
+	public abstract String getTagName ();
 	
 	
 	/**
