@@ -311,4 +311,17 @@ public class TextNode
 	{
 		return TEXT_TAG;
 	}
+	
+	
+	/**
+	 * Gets the distance between the texts of two nodes. Here it is defined as the Levenshtein distance / max Levenshtein distance.
+	 *
+	 * @param cmp the node to compare
+	 * @return the text distance
+	 */
+	public double getTextDistance (TextNode cmp)
+	{
+		double dist = GeneralTools.computeLevenshteinDistance (text, cmp.text);
+		return dist / Math.max (text.length (), cmp.text.length ());
+	}
 }
