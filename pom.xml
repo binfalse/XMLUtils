@@ -3,7 +3,7 @@
     <groupId>de.unirostock.sems</groupId>
     <artifactId>xmlutils</artifactId>
     <packaging>jar</packaging>
-    <version>0.4.5</version>
+    <version>0.4.6</version>
     <name>xmlutils</name>
     <description>
         A toolkit useful for working with XML documents
@@ -40,7 +40,7 @@
         <dependency>
             <groupId>de.binfalse</groupId>
             <artifactId>BFUtils</artifactId>
-            <version>0.3.6</version>
+            <version>0.4.1</version>
         </dependency>
         <dependency>
             <groupId>org.jdom</groupId>
