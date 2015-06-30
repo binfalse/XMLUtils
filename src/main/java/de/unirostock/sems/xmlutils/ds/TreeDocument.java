@@ -142,6 +142,7 @@ public class TreeDocument
 		root = new DocumentNode (d.getRootElement (), null, this, w, 1, 0);
 		this.ordered = ordered;
 		uniqueIds = true;
+		this.baseUri = baseUri;
 	}
 	
 	
