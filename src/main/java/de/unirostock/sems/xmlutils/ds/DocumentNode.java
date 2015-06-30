@@ -636,14 +636,32 @@ public class DocumentNode
 		{
 			if (cmp.attributes.get (name) == null)
 				unmatch += 1;
-			else if (!cmp.attributes.get (name).getValue ().equals (attributes.get (name).getValue ()))
-				unmatch += 2;
+			else
+			{
+				String v1 = cmp.attributes.get (name).getValue ();
+				String v2 = attributes.get (name).getValue ();
+				if (name.equals ("name"))
+				{
+					if (!v1.equals (v2))
+					{
+						double dist = GeneralTools.computeLevenshteinDistance (v1, v2);
+						double len = Math.min (v1.length (), v2.length ());
+						unmatch += 1./len + 4.5 * Math.log (dist) / Math.log (len);
+						continue;
+					}
+				}
+				else if (!v1.equals (v2))
+					unmatch += 2;
+			}
 		}
 		for (String name : cmp.attributes.keySet ())
 		{
 			if (attributes.get (name) == null)
 				unmatch += 1;
 		}
+		
+		if (unmatch < Double.MIN_VALUE)
+			return 0;
 		
 		// final recipe:
 		return unmatch / (double) (attributes.size () + cmp.attributes.size ());
@@ -757,9 +775,12 @@ public class DocumentNode
 			if (!child.hasModification (SUBTREEUNMAPPED))
 				kidsUnmapped = false;
 		}
+		LOGGER.debug ("after subtreeunmapped mod of ", xPath, " = ", modified);
+		
 		if (kidChanged)
 			addModification (SUB_MODIFIED);
 		LOGGER.debug ("evaluate kids changed: ", kidChanged, " -- for ", xPath);
+		LOGGER.debug ("after kid changed mod of ", xPath, " = ", modified);
 		
 		// do we have a connection?
 		Connection con = conMgmr.getConnectionForNode (this);
@@ -772,6 +793,7 @@ public class DocumentNode
 				addModification (SUBTREEUNMAPPED);
 			return true;
 		}
+		LOGGER.debug ("after unmapped/subtreeunmapped mod of ", xPath, " = ", modified);
 		
 		// ok, let's compare
 		TreeNode partner = con.getPartnerOf (this);
@@ -780,12 +802,13 @@ public class DocumentNode
 		// different content?
 		if (contentDiffers (partner))
 			addModification (MODIFIED);
+		LOGGER.debug ("after modified check mod of ", xPath, " = ", modified);
 		
 		// moved?
 		if (networkDiffers (partner, conMgmr, con))
 			addModification (MOVED);
 		
-		LOGGER.debug ("mod of ", xPath, " = ", modified);
+		LOGGER.debug ("move check mod of ", xPath, " = ", modified);
 		
 		return modified != 0;
 	}
