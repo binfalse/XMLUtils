@@ -32,6 +32,7 @@ import org.junit.runners.JUnit4;
 import de.binfalse.bflog.LOGGER;
 import de.binfalse.bfutils.GeneralTools;
 import de.unirostock.sems.xmlutils.alg.SemsWeighter;
+import de.unirostock.sems.xmlutils.alg.XyWeighter;
 import de.unirostock.sems.xmlutils.ds.DocumentNode;
 import de.unirostock.sems.xmlutils.ds.NodeDistance;
 import de.unirostock.sems.xmlutils.ds.NodeDistanceComparator;
@@ -115,7 +116,7 @@ public class TestTreeDocument
 		assertNotNull (test);
 		test = new TreeDocument (XmlTools.readDocument (SIMPLE_DOC), new SemsWeighter (), SIMPLE_DOC.toURI ());
 		assertNotNull (test);
-		test = new TreeDocument (XmlTools.readDocument (SIMPLE_DOC), new SemsWeighter (), SIMPLE_DOC.toURI (), true);
+		test = new TreeDocument (XmlTools.readDocument (SIMPLE_DOC), new XyWeighter (), SIMPLE_DOC.toURI (), true);
 		assertNotNull (test);
 		test = new TreeDocument (XmlTools.readDocument (SIMPLE_DOC), null, SIMPLE_DOC.toURI (), true);
 		assertNotNull (test);
