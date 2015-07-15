@@ -647,12 +647,24 @@ public class DocumentNode
 	
 	/**
 	 * Calculates the distance of attributes. Returns a double in [0,1].
+	 * 
+	 * <ul>
+	 * <li>
 	 * If all attributes match the distance will be 0, if none of the attributes
 	 * match the distance will be 1.
+	 * </li><li>
+	 * If <code>allowDifferentIds</code> is set to false, the distance will always be 1 if the two nodes do not share the same attribute.
+	 * </li><li>
+	 * If <code>careAboutNames</code> is set to true, we will treat the name attributes differently. That means the difference between <em>Glucose5Phosphate</em> and <em>Glucose6Phosphate</em> (might just be a typo) will be rated less and the difference between <em>Glucose3Phosphate</em> and <em>MAPKK2</em> will be rated much higher. We are using the `<a href="https://en.wikipedia.org/wiki/Michaelis%E2%80%93Menten_kinetics">Michaelis–Menten kinetics</a>` (:-)) to calc the difference between names: <code>vmax=6; km=min(length(name1),length(name2))/4; [S]=levenshteinDistance(name1,name2)</code>
+	 * </li><li>
+	 * If <code>careAboutNames</code> is set to true AND <code>stricterNames</code> is set to true a difference in the name is treated very strictly. So if you're sure that your names are very similar, you should go for that option: <code>vmax=12; km=min(length(name1),length(name2))/6; [S]=levenshteinDistance(name1,name2)</code>
+	 * </li> 
+	 * </ul>
 	 * 
-	 * 
-	 * @param cmp
-	 *          the node to compare
+	 * @param cmp the node to compare
+	 * @param allowDifferentIds are different ids allowed?
+	 * @param careAboutNames should we care about names?
+	 * @param stricterNames should we handle names very strictly?
 	 * @return the attribute distance in [0,1]
 	 */
 	public double getAttributeDistance (DocumentNode cmp, boolean allowDifferentIds, boolean careAboutNames, boolean stricterNames)
