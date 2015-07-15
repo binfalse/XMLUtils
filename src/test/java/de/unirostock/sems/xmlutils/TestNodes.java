@@ -253,6 +253,8 @@ public class TestNodes
 		tn1.setAttribute (a);
 		assertEquals (tn1.getAttributeValue ("attr2"), "val1");
 		assertEquals (tn1.getAttributeValue ("attr2", ""), "val1");
+		assertNull (tn1.getAttributeValue ("attr23", ""));
+		assertNull (tn1.getAttributeValue ("attr2", "stuff"));
 		assertNotNull (tn1.dump ("  "));
 		assertNotNull (tn1.toString ());
 		

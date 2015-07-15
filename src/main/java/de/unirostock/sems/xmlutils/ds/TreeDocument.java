@@ -191,7 +191,9 @@ public class TreeDocument
 	
 	/**
 	 * Resort subtrees.
+	 * @deprecated  We are now using a sorted set, no resorting necessary anymore. This method doesn't do anything anymore.
 	 */
+	@Deprecated
 	public void resortSubtrees ()
 	{
 		// moved to sorted set -> re-sorting unnecessary..

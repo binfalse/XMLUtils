@@ -687,7 +687,7 @@ public class DocumentNode
 						continue;
 					}
 				}
-				else if (!allowDifferentIds && name.equals ("id") && !v1.equals (v2))
+				else if (!allowDifferentIds && name.equals (ID_ATTR) && !v1.equals (v2))
 					return 1;
 				else if (!v1.equals (v2))
 					unmatch += 2;
