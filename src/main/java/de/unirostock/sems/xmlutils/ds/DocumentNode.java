@@ -516,6 +516,17 @@ public class DocumentNode
 	
 	
 	/**
+	 * Removes an attribute.
+	 *
+	 * @param attr the attributes name
+	 */
+	public void rmAttribute (String attr)
+	{
+		attributes.remove (attr);
+	}
+	
+	
+	/**
 	 * Gets set attributes.
 	 * 
 	 * @return the attribute names
@@ -614,6 +625,26 @@ public class DocumentNode
 	}
 	
 	
+
+	/**
+	 * Calculates the distance of attributes.
+	 * 
+	 * Basically calls {@link #getAttributeDistance(DocumentNode, boolean, boolean, boolean)} allowing different ids, caring about names, but not stricter names.
+	 * 
+	 * Returns a double in [0,1]. If all attributes match the distance will be 0, if none of the attributes match the distance will be 1.
+	 * 
+	 * 
+	 * @param cmp
+	 *          the node to compare
+	 * @return the attribute distance in [0,1]
+	 */
+	public double getAttributeDistance (DocumentNode cmp)
+	{
+		return getAttributeDistance (cmp, true, true, false);
+	}
+	
+	
+	
 	/**
 	 * Calculates the distance of attributes. Returns a double in [0,1].
 	 * If all attributes match the distance will be 0, if none of the attributes
@@ -624,7 +655,7 @@ public class DocumentNode
 	 *          the node to compare
 	 * @return the attribute distance in [0,1]
 	 */
-	public double getAttributeDistance (DocumentNode cmp)
+	public double getAttributeDistance (DocumentNode cmp, boolean allowDifferentIds, boolean careAboutNames, boolean stricterNames)
 	{
 		// both have no attributes => equality in this context
 		if (attributes.size () == 0 && cmp.attributes.size () == 0)
@@ -640,16 +671,24 @@ public class DocumentNode
 			{
 				String v1 = cmp.attributes.get (name).getValue ();
 				String v2 = attributes.get (name).getValue ();
-				if (name.equals ("name"))
+				if (careAboutNames && name.equals ("name"))
 				{
 					if (!v1.equals (v2))
 					{
 						double dist = GeneralTools.computeLevenshteinDistance (v1, v2);
 						double len = Math.min (v1.length (), v2.length ());
-						unmatch += 1./len + 4.5 * Math.log (dist) / Math.log (len);
+						// thx to michaelis menten:
+						// if strict names: vmax = 12; km=len/6
+						// otherwise: vmax = 6; km=len/4
+						if (stricterNames)
+							unmatch += 12. * dist / (len / 6 + dist);
+						else
+							unmatch += 6. * dist / (len / 4 + dist);
 						continue;
 					}
 				}
+				else if (!allowDifferentIds && name.equals ("id") && !v1.equals (v2))
+					return 1;
 				else if (!v1.equals (v2))
 					unmatch += 2;
 			}
@@ -664,7 +703,8 @@ public class DocumentNode
 			return 0;
 		
 		// final recipe:
-		return unmatch / (double) (attributes.size () + cmp.attributes.size ());
+		double dist = unmatch / (double) (attributes.size () + cmp.attributes.size ());
+		return dist > 1 ? 1 : dist;
 	}
 	
 	

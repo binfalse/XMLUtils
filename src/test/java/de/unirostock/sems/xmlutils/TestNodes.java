@@ -323,7 +323,10 @@ public class TestNodes
 			{
 				TN1.setAttribute ("name", a);
 				TN2.setAttribute ("name", b);
-				return TN1.getAttributeDistance (TN2);
+				//System.out.println ("distance between " + a + " -and- " + b);
+				double dist = TN1.getAttributeDistance (TN2);
+				//System.out.println ("distance is " + dist);
+				return dist;
 			}
 		}
 		expected e = new expected ();
@@ -334,7 +337,7 @@ public class TestNodes
 			e.check ("some name", "some name"),
 			0.00001);
 		
-		
+		//System.out.println (1./(double)TN1.getAttributes ().size ());
 		assertTrue (
 			"attribute distance should be less than 2/(#attr) for levenshtein distance of 1",
 			1./(double)TN1.getAttributes ().size () > 
@@ -344,16 +347,18 @@ public class TestNodes
 		assertTrue (
 			"attribute distance should be less than 2/(#attr) for similar strings",
 			1./(double)TN1.getAttributes ().size () > 
-			e.check ("some", "s0me"));
-
+			e.check ("some name", "s0me name"));
+		//System.out.println ("attribiutes: " + TN1.getAttributes ().size ());
+		//System.out.println ("attr dist: " + e.check ("some name", "s0m3 nam3"));
+		
 		assertTrue (
 			"attribute distance should be bigger than 2/(#attr) for unsimilar strings",
 			1./(double)TN1.getAttributes ().size () < 
-			e.check ("some", "s0m3"));
+			e.check ("some name", "s0m3 nam3"));
 		
 		assertTrue (
 			"attribute distance should be very small for very similar strings",
-			0.02 > 
+			0.2 > 
 			// that is a typo
 			e.check ("Maltoheptaose_C42H72O56", "Maltoheptaose_C42H72O36"));
 		
@@ -368,10 +373,78 @@ public class TestNodes
 			1./(double)TN1.getAttributes ().size () <
 			// that is no typo
 			e.check ("D-Glucosamine_C6H14NO5", "D-Mannosamine_C6H14NO5"));
+		
 
+
+		TN1.rmAttribute ("name");
+		TN1.rmAttribute ("attr1");
+		TN1.rmAttribute ("attr2");
+		TN2.rmAttribute ("name");
+		TN2.rmAttribute ("attr1");
+		TN2.rmAttribute ("attr2");
+		
+		// example sent by tobias
+		//<species id="cpd00523_c" name="D-trehalose-6-phosphate_C12H22O14P" compartment="c" charge="-1" boundaryCondition="false"/>
+		//<species id="cpd03454_c" name="Cytidine_3'-phosphate_C9H13N3O8P" compartment="c" charge="-1" boundaryCondition="false"/>
+		TN1.setAttribute ("id", "cpd00523_c");
+		TN1.setAttribute ("name", "D-trehalose-6-phosphate_C12H22O14P");
+		TN1.setAttribute ("compartment", "c");
+		TN1.setAttribute ("charge", "-1");
+		TN1.setAttribute ("boundaryCondition", "false");
+		
+		TN2.setAttribute ("id", "cpd03454_c");
+		TN2.setAttribute ("name", "Cytidine_3'-phosphate_C9H13N3O8P");
+		TN2.setAttribute ("compartment", "c");
+		TN2.setAttribute ("charge", "-1");
+		TN2.setAttribute ("boundaryCondition", "false");
+		
+		//System.out.println (TN1);
+		assertTrue (
+			"attribute distance should be over thresh for non-typos",
+			.5 <
+			TN1.getAttributeDistance (TN2));
+		
+		assertTrue (
+			"attribute distance with stricter names should be much higher",
+			TN1.getAttributeDistance (TN2) <
+			TN1.getAttributeDistance (TN2, true, true, true));
+		
+
+		TN1.setAttribute ("id", "cpd00523_c");
+		TN1.setAttribute ("name", "E-3-carboxy-2-pentenedioate_6-methyl ester_C7H6O6");
+
+		TN2.setAttribute ("id", "cpd03454_c");
+		TN2.setAttribute ("name", "DNA_C15H23O13P2R3");
+		
+		//System.out.println (TN1);
+		//System.out.println (TN1.getAttributeDistance (TN2));
+		assertTrue (
+			"attribute distance should be over thresh for non-typos",
+			.7 <
+			TN1.getAttributeDistance (TN2));
+		
+		// test ids
+		assertTrue (
+			"attribute distance should be over thresh for non-typos",
+			.99 <
+			TN1.getAttributeDistance (TN2, false, false, false));
+
+		TN1.setAttribute ("id", TN2.getAttributeValue ("id"));
+		assertTrue (
+			"attribute distance should be over thresh for non-typos",
+			.99 >
+			TN1.getAttributeDistance (TN2, false, false, false));
+		
+		
+		
+		
+		
+		
 		
 		tn1 = (DocumentNode) simpleFile.getNodeByPath ("/conversations[1]/message[1]/from[1]");
 		tn2 = (DocumentNode) simpleFile.getNodeByPath ("/conversations[1]/message[2]/from[1]");
+		
+		
 		
 		assertEquals ("original tree shouldn't have changed!", 0, tn1.getAttributes ().size ());
 		assertEquals ("original tree shouldn't have changed!", 0, tn2.getAttributes ().size ());
