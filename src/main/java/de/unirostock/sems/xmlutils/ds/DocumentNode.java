@@ -690,12 +690,12 @@ public class DocumentNode
 						double dist = GeneralTools.computeLevenshteinDistance (v1, v2);
 						double len = Math.min (v1.length (), v2.length ());
 						// thx to michaelis menten:
-						// if strict names: vmax = 12; km=len/6
-						// otherwise: vmax = 6; km=len/4
+						// if strict names: vmax = 15; km=len/6
+						// otherwise: vmax = 8; km=len/3
 						if (stricterNames)
-							unmatch += 12. * dist / (len / 6 + dist);
+							unmatch += 15. * dist / (len / 6. + dist);
 						else
-							unmatch += 6. * dist / (len / 4 + dist);
+							unmatch += 8. * dist / (len / 3. + dist);
 						continue;
 					}
 				}

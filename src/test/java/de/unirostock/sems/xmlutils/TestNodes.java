@@ -326,6 +326,8 @@ public class TestNodes
 				TN1.setAttribute ("name", a);
 				TN2.setAttribute ("name", b);
 				//System.out.println ("distance between " + a + " -and- " + b);
+				//System.out.println (TN1);
+				//System.out.println (TN2);
 				double dist = TN1.getAttributeDistance (TN2);
 				//System.out.println ("distance is " + dist);
 				return dist;
@@ -341,14 +343,8 @@ public class TestNodes
 		
 		//System.out.println (1./(double)TN1.getAttributes ().size ());
 		assertTrue (
-			"attribute distance should be less than 2/(#attr) for levenshtein distance of 1",
-			1./(double)TN1.getAttributes ().size () > 
-			e.check ("some name", "s0me name"));
-		
-		
-		assertTrue (
-			"attribute distance should be less than 2/(#attr) for similar strings",
-			1./(double)TN1.getAttributes ().size () > 
+			"attribute distance should be less than 2/#attr (" + 1./(double)TN1.getAttributes ().size () + ") for levenshtein distance of 1",
+			1./(double)TN1.getAttributes ().size () >= 
 			e.check ("some name", "s0me name"));
 		//System.out.println ("attribiutes: " + TN1.getAttributes ().size ());
 		//System.out.println ("attr dist: " + e.check ("some name", "s0m3 nam3"));
@@ -401,6 +397,7 @@ public class TestNodes
 		TN2.setAttribute ("boundaryCondition", "false");
 		
 		//System.out.println (TN1);
+		//System.out.println (TN1.getAttributeDistance (TN2));
 		assertTrue (
 			"attribute distance should be over thresh for non-typos",
 			.5 <
