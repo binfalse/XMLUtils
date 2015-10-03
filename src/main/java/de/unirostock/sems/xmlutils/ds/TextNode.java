@@ -138,7 +138,7 @@ public class TextNode
 		setModification (UNCHANGED);
 		
 		Connection con = conMgmr.getConnectionForNode (this);
-		if (con == null)
+		if (con == null || con.getPartnerOf (this) == null)
 		{
 			addModification (UNMAPPED | SUBTREEUNMAPPED);
 			return true;

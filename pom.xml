@@ -3,7 +3,7 @@
     <groupId>de.unirostock.sems</groupId>
     <artifactId>xmlutils</artifactId>
     <packaging>jar</packaging>
-    <version>0.6.4</version>
+    <version>0.6.5</version>
     <name>xmlutils</name>
     <description>
         A toolkit useful for working with XML documents

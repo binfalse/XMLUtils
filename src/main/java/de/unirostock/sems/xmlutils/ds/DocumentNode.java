@@ -836,7 +836,7 @@ public class DocumentNode
 		
 		// do we have a connection?
 		Connection con = conMgmr.getConnectionForNode (this);
-		if (con == null)
+		if (con == null || con.getPartnerOf (this) == null)
 		{
 			LOGGER.debug (xPath, " is unmapped");
 			addModification (UNMAPPED);
