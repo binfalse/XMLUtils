@@ -1,7 +1,15 @@
 package de.unirostock.sems.xmlutils.tools;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.InterruptedIOException;
+import java.io.PrintStream;
+import java.util.Formatter;
+import java.util.Locale;
 
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
@@ -26,10 +34,11 @@ import de.unirostock.sems.xmlutils.ds.TreeDocument;
  */
 public class DocumentTools
 {
+	
 	/**
 	 * no need to recreate the builder everytime...
 	 */
-	private static SAXBuilder builder;
+	private static SAXBuilder		builder;
 	
 	/** The transformer to convert content mathml to presentation mathml. */
 	private static Transformer	mathTransformer;
@@ -62,7 +71,7 @@ public class DocumentTools
 			if (builder == null)
 				builder = XmlTools.getBuilder ();
 			
-			//Document d = builder.newDocument ();
+			// Document d = builder.newDocument ();
 			Document d = new Document (node.getSubDoc (null));
 			return d;
 		}
@@ -88,8 +97,10 @@ public class DocumentTools
 			if (builder == null)
 				builder = XmlTools.getBuilder ();
 			
-			/*Document d = builder.newDocument ();
-			node.getSubDoc (d, null);*/
+			/*
+			 * Document d = builder.newDocument ();
+			 * node.getSubDoc (d, null);
+			 */
 			return XmlTools.printDocument (new Document (node.getSubDoc (null)));
 		}
 		catch (Exception e)
@@ -114,10 +125,12 @@ public class DocumentTools
 			if (builder == null)
 				builder = XmlTools.getBuilder ();
 			
-			/*Document d = builder.newDocument ();
-			node.getSubDoc (d, null);*/
-			return XmlTools.prettyPrintDocument (new Document (node.getSubDoc (null)))
-				.toString ();
+			/*
+			 * Document d = builder.newDocument ();
+			 * node.getSubDoc (d, null);
+			 */
+			return XmlTools
+				.prettyPrintDocument (new Document (node.getSubDoc (null))).toString ();
 		}
 		catch (Exception e)
 		{
@@ -140,6 +153,23 @@ public class DocumentTools
 	public static String transformMathML (DocumentNode doc)
 		throws TransformerException
 	{
+		/************************************************
+		 * this is a workaround due to a bug in xerces
+		 * which stupidly prints warnings to std::err...
+		 * 
+		 * no way to stop it, except:
+		 * disabling std::err.
+		 * 
+		 * very annoying... and expensive..
+		 * 
+		 * see also
+		 * http://bugs.java.com/view_bug.do?bug_id=8015487
+		 * http://bugs.java.com/view_bug.do?bug_id=8016153
+		 * http://stackoverflow.com/questions/25453042/how-to-disable-accessexternaldtd-and-entityexpansionlimit-warnings-with-logback
+		 ************************************************/
+		PrintStream err = System.err;
+		System.setErr (new DummyPrintStream ());
+		
 		if (mathTransformer == null)
 		{
 			TransformerFactory tFactory = TransformerFactory.newInstance ();
@@ -152,12 +182,197 @@ public class DocumentTools
 		SimpleOutputStream out = new SimpleOutputStream ();
 		String math = printSubDoc (doc);
 		// xslt cannot namespace
-		math = math.replaceAll ("\\S+:\\S+\\s*=\\s*\"[^\"]*\"", "").replaceAll (" /", "/");
+		math = math.replaceAll ("\\S+:\\S+\\s*=\\s*\"[^\"]*\"", "").replaceAll (
+			" /", "/");
 		
 		mathTransformer.transform (
 			new StreamSource (new ByteArrayInputStream (math.getBytes ())),
 			new StreamResult (out));
+		
+		/************************************************
+		 * here we just restore our good old std::err...
+		 ************************************************/
+		System.setErr (err);
+		
 		return out.toString ();
 	}
 	
+	/************************************************
+	 * this is the print stream that we'll use to
+	 * work around the xerces bug..
+	 * 
+	 * this class is just to reduce the number of calls
+	 ************************************************/
+	private static class DummyPrintStream
+		extends PrintStream
+	{
+		
+		public DummyPrintStream ()
+		{
+			super (new ByteArrayOutputStream ());
+		}
+		
+		
+		public PrintStream append (char c)
+		{
+			return this;
+		}
+		
+		
+		public PrintStream append (CharSequence c)
+		{
+			return this;
+		}
+		
+		
+		public PrintStream append (CharSequence c, int i, int j)
+		{
+			return this;
+		}
+		
+		
+		public boolean checkError ()
+		{
+			return false;
+		}
+		
+		
+		public void flush ()
+		{
+		}
+		
+		
+		public void close ()
+		{
+		}
+		
+		
+		public void write (int b)
+		{
+		}
+		
+		
+		public void print (long l)
+		{
+		}
+		
+		
+		public void print (float f)
+		{
+		}
+		
+		
+		public void print (char s[])
+		{
+		}
+		
+		
+		public void println ()
+		{
+		}
+		
+		
+		public void print (String s)
+		{
+		}
+		
+		
+		public void print (Object obj)
+		{
+		}
+		
+		
+		public void print (double d)
+		{
+		}
+		
+		
+		public void print (int i)
+		{
+		}
+		
+		
+		public void print (char c)
+		{
+		}
+		
+		
+		public void print (boolean b)
+		{
+		}
+		
+		
+		public void write (byte buf[], int off, int len)
+		{
+		}
+		
+		
+		public void println (boolean x)
+		{
+		}
+		
+		
+		public void println (char x)
+		{
+		}
+		
+		
+		public void println (int x)
+		{
+		}
+		
+		
+		public void println (long x)
+		{
+		}
+		
+		
+		public void println (float x)
+		{
+		}
+		
+		
+		public void println (double x)
+		{
+		}
+		
+		
+		public void println (char x[])
+		{
+		}
+		
+		
+		public void println (String x)
+		{
+		}
+		
+		
+		public void println (Object x)
+		{
+		}
+		
+		
+		public PrintStream printf (String format, Object... args)
+		{
+			return this;
+		}
+		
+		
+		public PrintStream printf (Locale l, String format, Object... args)
+		{
+			return this;
+		}
+		
+		
+		public PrintStream format (String format, Object... args)
+		{
+			return this;
+		}
+		
+		
+		public PrintStream format (Locale l, String format, Object... args)
+		{
+			return this;
+		}
+	}
 }

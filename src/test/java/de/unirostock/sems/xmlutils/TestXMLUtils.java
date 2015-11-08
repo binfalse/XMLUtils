@@ -13,7 +13,7 @@ import org.junit.runners.Suite.SuiteClasses;
  *
  */
 @RunWith(Suite.class)
-@SuiteClasses({ TestExamples.class, TestExceptions.class, TestNodeMappers.class, TestNodes.class, TestTreeDocument.class, XmlTest.class })
+@SuiteClasses({ TestExamples.class, TestExceptions.class, TestNodeMappers.class, TestNodes.class, TestTreeDocument.class, XmlTest.class, TestMath.class })
 public class TestXMLUtils
 {
 	
