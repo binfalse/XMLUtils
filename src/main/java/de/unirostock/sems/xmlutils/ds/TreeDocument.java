@@ -482,7 +482,7 @@ public class TreeDocument
 	
 	
 	/**
-	 * Gets the node statistics as a map `tag name` => `nodes sharing this tag`.
+	 * Gets the node statistics as a map `tag name` =&gt; `nodes sharing this tag`.
 	 * 
 	 * @return the node stats
 	 */

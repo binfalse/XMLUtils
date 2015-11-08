@@ -24,34 +24,34 @@ public abstract class TreeNode
 	/** The node tag name for text nodes, as we will use it in XPath expressions. */
 	public static final String	TEXT_TAG				= "text()";
 	
-	/** UNCHANGED => node hasn't changes. */
+	/** UNCHANGED =&gt; node hasn't changes. */
 	public static final int			UNCHANGED				= 0;
 	
-	/** UNMAPPED => node wasn't mapped. */
+	/** UNMAPPED =&gt; node wasn't mapped. */
 	public static final int			UNMAPPED				= 1;
 	
-	/** MOVED => node has moves. */
+	/** MOVED =&gt; node has moves. */
 	public static final int			MOVED						= 2;
 	
-	/** MODIFIED => node was modified. */
+	/** MODIFIED =&gt; node was modified. */
 	public static final int			MODIFIED				= 4;
 	
-	/** SUB_MODIFIED => the corresponding subtree was modified. */
+	/** SUB_MODIFIED =&gt; the corresponding subtree was modified. */
 	public static final int			SUB_MODIFIED		= 8;
 	
-	/** COPIED => node was copied. */
+	/** COPIED =&gt; node was copied. */
 	public static final int			COPIED					= 16;
 	
-	/** GLUED => node was glued. */
+	/** GLUED =&gt; node was glued. */
 	public static final int			GLUED						= 32;
 	
-	/** KIDSSWAPPED => the sequence of kids of this node were altered. */
+	/** KIDSSWAPPED =&gt; the sequence of kids of this node were altered. */
 	public static final int			KIDSSWAPPED			= 64;
 	
-	/** SWAPPEDKID => this is a swapped kid. */
+	/** SWAPPEDKID =&gt; this is a swapped kid. */
 	public static final int			SWAPPEDKID			= 128;
 	
-	/** SUBTREEUNMAPPED => the whole subtree is unmapped. */
+	/** SUBTREEUNMAPPED =&gt; the whole subtree is unmapped. */
 	public static final int			SUBTREEUNMAPPED	= 256;
 	
 	/**
@@ -378,7 +378,7 @@ public abstract class TreeNode
 	 * Recursively attaches its children. Will fail for
 	 * 
 	 * <code>
-	 * parent == null && this.getType () == TreeNode.TEXT_NODE
+	 * parent == null &amp;&amp; this.getType () == TreeNode.TEXT_NODE
 	 * </code>
 	 * 
 	 * That means a text node cannot become root.
@@ -409,7 +409,7 @@ public abstract class TreeNode
 	
 	
 	/**
-	 * Gets the node statistics of the subtree rooted in this node: tagname =>
+	 * Gets the node statistics of the subtree rooted in this node: tagname =&gt;
 	 * number nodes having this tag name.
 	 * 
 	 * @param map

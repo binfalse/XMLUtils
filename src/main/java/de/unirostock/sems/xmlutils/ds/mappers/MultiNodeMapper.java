@@ -12,7 +12,7 @@ import java.util.Set;
 
 /**
  * The Class MultiNodeMapper maps Strings to a list of nodes. Intended to map
- * non-unique labels (e.g. tag names => nodes). T is usually TreeNode or
+ * non-unique labels (e.g. tag names =&gt; nodes). T is usually TreeNode or
  * DocumentNode.
  * 
  * @param <T>

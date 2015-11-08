@@ -317,7 +317,7 @@ public class DocumentNode
 	
 	/**
 	 * Sets the id attribute. (you may want to use something like the
-	 * <code>metaid</code> instead of the <code>id<code> as identifier)
+	 * <code>metaid</code> instead of the <code>id</code> as identifier)
 	 * 
 	 * @param id
 	 *          the new id attribute
