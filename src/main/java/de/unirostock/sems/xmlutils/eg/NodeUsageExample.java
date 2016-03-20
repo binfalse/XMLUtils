@@ -30,14 +30,16 @@ public class NodeUsageExample
 {
 	
 	/**
-	 * @param args
-	 * @throws IOException
-	 * @throws SAXException
-	 * @throws ParserConfigurationException
-	 * @throws FileNotFoundException
-	 * @throws XmlDocumentParseException
-	 * @throws XmlDocumentConsistencyException
-	 * @throws JDOMException 
+	 * The main method.
+	 *
+	 * @param args the arguments
+	 * @throws XmlDocumentParseException the xml document parse exception
+	 * @throws FileNotFoundException the file not found exception
+	 * @throws ParserConfigurationException the parser configuration exception
+	 * @throws SAXException the SAX exception
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 * @throws XmlDocumentConsistencyException the xml document consistency exception
+	 * @throws JDOMException the JDOM exception
 	 */
 	public static void main (String[] args)
 		throws XmlDocumentParseException,

@@ -3,13 +3,17 @@
  */
 package de.unirostock.sems.xmlutils;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.fail;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
 
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.jdom2.Document;
 import org.jdom2.JDOMException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,8 +21,8 @@ import org.junit.runners.JUnit4;
 import org.xml.sax.SAXException;
 
 import de.unirostock.sems.xmlutils.exception.XmlDocumentConsistencyException;
-import de.unirostock.sems.xmlutils.exception.XmlDocumentException;
 import de.unirostock.sems.xmlutils.exception.XmlDocumentParseException;
+import de.unirostock.sems.xmlutils.tools.XmlTools;
 
 
 
@@ -27,7 +31,7 @@ import de.unirostock.sems.xmlutils.exception.XmlDocumentParseException;
  * 
  */
 @RunWith(JUnit4.class)
-public class TestExceptions
+public class TestFileRetrieving
 {
 
 
@@ -45,10 +49,17 @@ public class TestExceptions
 	 * @throws JDOMException the JDOM exception
 	 */
 	@Test
-	public void testNodeMapper () throws XmlDocumentParseException, FileNotFoundException, XmlDocumentConsistencyException, ParserConfigurationException, SAXException, IOException, JDOMException
+	public void testRetrieving () throws XmlDocumentParseException, FileNotFoundException, XmlDocumentConsistencyException, ParserConfigurationException, SAXException, IOException, JDOMException
 	{
-		assertEquals ("my ex msg", new XmlDocumentConsistencyException ("my ex msg").getMessage ());
-		assertEquals ("my ex msg", new XmlDocumentException ("my ex msg").getMessage ());
-		assertEquals ("my ex msg", new XmlDocumentParseException ("my ex msg").getMessage ());
+		try
+		{
+			Document d = XmlTools.readDocument (new URL ("http://most.sems.uni-rostock.de/resources/d3d3LmViaS5hYy51ay9iaW9tb2RlbHMtbWFpbi8=/L0JJT01EMDAwMDAwMDE0MA==/MjAwNy0wOS0yNQ=="));
+			assertFalse ("retrieved file is null", d == null);
+		}
+		catch (URISyntaxException e)
+		{
+			e.printStackTrace();
+			fail ("wasn't able to retrieve file: " + e.getMessage ());
+		}
 	}
 }

@@ -32,6 +32,9 @@ import de.unirostock.sems.xmlutils.tools.DocumentTools;
 public class TestMath
 {
 	
+	/**
+	 * Test math.
+	 */
 	@Test
 	public void testMath ()
 	{

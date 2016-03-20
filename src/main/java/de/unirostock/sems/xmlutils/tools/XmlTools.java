@@ -10,6 +10,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.jdom2.Document;
 import org.jdom2.JDOMException;
@@ -76,7 +78,10 @@ public class XmlTools
 
 		File tmp = File.createTempFile ("Bives", "download");
 		tmp.deleteOnExit ();
-		FileRetriever.getFile (url.toURI (), tmp);
+		// let's ask for xml, specifically
+		Map<String, String> addHeaders = new HashMap<String, String> ();
+		addHeaders.put ("Accept", "application/xml");
+		FileRetriever.getFile (url.toURI (), tmp, addHeaders);
 		
 		return builder.build (new FileInputStream (tmp));
 	}

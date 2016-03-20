@@ -18,8 +18,10 @@ public class XMLTools
 {
 	
 	/**
-	 * @param args
-	 * @throws Exception 
+	 * The main method.
+	 *
+	 * @param args the arguments
+	 * @throws Exception the exception
 	 */
 	public static void main (String[] args) throws Exception
 	{

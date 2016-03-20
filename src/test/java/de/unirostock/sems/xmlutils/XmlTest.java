@@ -196,7 +196,9 @@ public class XmlTest
 	
 	
 	/**
-	 * @param n
+	 * Gets the size.
+	 *
+	 * @param n the n
 	 * @return size
 	 */
 	public int getSize (TreeNode n)
@@ -618,7 +620,9 @@ public class XmlTest
 	}
 	
 	/**
-	 * @param node
+	 * Test node stuff.
+	 *
+	 * @param node the node
 	 */
 	public void testNodeStuff (TextNode node)
 	{
@@ -633,7 +637,9 @@ public class XmlTest
 	}
 	
 	/**
-	 * @param node
+	 * Test node stuff.
+	 *
+	 * @param node the node
 	 */
 	public void testNodeStuff (DocumentNode node)
 	{

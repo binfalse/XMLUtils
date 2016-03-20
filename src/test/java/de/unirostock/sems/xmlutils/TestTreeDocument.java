@@ -4,25 +4,14 @@
 package de.unirostock.sems.xmlutils;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.io.IOException;
-import java.security.SecureRandom;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Random;
 
-import javax.xml.transform.TransformerException;
-
-import org.jdom2.Attribute;
-import org.jdom2.Element;
 import org.jdom2.JDOMException;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -30,18 +19,12 @@ import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 import de.binfalse.bflog.LOGGER;
-import de.binfalse.bfutils.GeneralTools;
 import de.unirostock.sems.xmlutils.alg.SemsWeighter;
 import de.unirostock.sems.xmlutils.alg.XyWeighter;
-import de.unirostock.sems.xmlutils.ds.DocumentNode;
-import de.unirostock.sems.xmlutils.ds.NodeDistance;
-import de.unirostock.sems.xmlutils.ds.NodeDistanceComparator;
-import de.unirostock.sems.xmlutils.ds.TextNode;
 import de.unirostock.sems.xmlutils.ds.TreeDocument;
 import de.unirostock.sems.xmlutils.ds.TreeNode;
 import de.unirostock.sems.xmlutils.exception.XmlDocumentConsistencyException;
 import de.unirostock.sems.xmlutils.exception.XmlDocumentParseException;
-import de.unirostock.sems.xmlutils.tools.DocumentTools;
 import de.unirostock.sems.xmlutils.tools.XmlTools;
 
 
@@ -103,11 +86,12 @@ public class TestTreeDocument
 	
 	
 	/**
-	 * @throws XmlDocumentConsistencyException 
-	 * @throws JDOMException 
-	 * @throws IOException 
-	 * @throws XmlDocumentParseException 
-	 * 
+	 * Test structure.
+	 *
+	 * @throws XmlDocumentConsistencyException the xml document consistency exception
+	 * @throws XmlDocumentParseException the xml document parse exception
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 * @throws JDOMException the JDOM exception
 	 */
 	@Test
 	public void testStructure () throws XmlDocumentConsistencyException, XmlDocumentParseException, IOException, JDOMException
