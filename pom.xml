@@ -3,7 +3,7 @@
     <groupId>de.uni-rostock.sbi</groupId>
     <artifactId>xmlutils</artifactId>
     <packaging>jar</packaging>
-    <version>0.6.7</version>
+    <version>0.6.9</version>
     <name>xmlutils</name>
     <description>
         A toolkit useful for working with XML documents
