@@ -3,11 +3,15 @@
     <groupId>de.uni-rostock.sbi</groupId>
     <artifactId>xmlutils</artifactId>
     <packaging>jar</packaging>
-    <version>0.6.10</version>
+    <version>0.6.11</version>
     <name>xmlutils</name>
     <description>
         A toolkit useful for working with XML documents
     </description>
+    <properties>
+        <maven.compiler.source>1.6</maven.compiler.source>
+        <maven.compiler.target>1.6</maven.compiler.target>
+    </properties>
     <url>http://sems.uni-rostock.de/</url>
     <organization>
         <name>SEMS project @ University of Rostock</name>
@@ -51,7 +55,7 @@
         <dependency>
             <groupId>de.binfalse</groupId>
             <artifactId>BFUtils</artifactId>
-            <version>0.5.4</version>
+            <version>0.5.5</version>
         </dependency>
         <dependency>
             <groupId>org.jdom</groupId>
