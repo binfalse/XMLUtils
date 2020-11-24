@@ -3,14 +3,14 @@
     <groupId>de.uni-rostock.sbi</groupId>
     <artifactId>xmlutils</artifactId>
     <packaging>jar</packaging>
-    <version>0.6.14</version>
+    <version>0.6.15</version>
     <name>xmlutils</name>
     <description>
         A toolkit useful for working with XML documents
     </description>
     <properties>
-        <maven.compiler.source>1.6</maven.compiler.source>
-        <maven.compiler.target>1.6</maven.compiler.target>
+        <maven.compiler.source>1.7</maven.compiler.source>
+        <maven.compiler.target>1.7</maven.compiler.target>
     </properties>
     <url>http://sems.uni-rostock.de/</url>
     <organization>

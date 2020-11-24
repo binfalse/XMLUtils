@@ -183,7 +183,7 @@ public class TextNode
 	public Element getSubDoc (Element parent)
 	{
 		if (parent != null)
-			parent.setText (text);
+			parent.addContent(text);
 		return null;
 	}
 	
